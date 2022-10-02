@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        
+        <div class="inputs-block">
+            <input type="text" class='text-field'>
+            <input type="text" class='text-field'>
+            <input type="text" class='text-field'>
+        </div>
+
+        <input type="button" name="add" id="addButton" value="Add more fields">
+        <input type="button" type="submit" value="CALCULATE" id="button">
+
+        <p class="results"></p>
+        <script type="text/javascript">
+            const addButton = document.getElementById('addButton');
+            const button = document.getElementById("button");
+
+            this.addEvents();
+
+            addButton.addEventListener('click', () => {
+                const inputBlock = document.querySelector('.inputs-block');
+                const newInput = document.createElement('input');
+                newInput.classList.add('text-field');
+
+                inputBlock.appendChild(newInput);
+
+                this.addEvents();
+            });
+
+            button.addEventListener('click', () => {
+                this.calculate();
+            });
+
+            function addEvents()
+            {
+                const textFields = document.querySelectorAll('.text-field');
+
+                textFields.forEach(field => {
+                    field.addEventListener('input', () => {
+                        this.calculate();
+                    });
+                });
+            }
+
+            function calculate()
+            {
+                const inputs = document.querySelectorAll('.text-field');
+                const avg = this.avg();
+                const sum = this.sum();
+                const min = this.getMinFromArray(inputs);
+                const max = this.getMaxFromArray(inputs);
+
+                const results = document.querySelector('.results');
+                results.innerHTML = "MIN - " + min + " MAX - " + max + " SUM - " + sum + " AVG - " + avg;
+            }
+
+            function getMinFromArray(inputs)
+            {
+                let array = [];
+
+                inputs.forEach(input => {
+                    array.push(parseFloat(input.value));
+                });
+
+                return Math.min(...array);
+            }
+
+            function getMaxFromArray(inputs)
+            {
+                let array = [];
+
+                inputs.forEach(input => {
+                    array.push(input.value);
+                });
+
+                return Math.max(...array);
+            }
+
+            function sum() {
+                const inputs = document.querySelectorAll('.text-field');
+                let sum = 0;
+
+                inputs.forEach(input => {
+                    const num =  parseFloat(input.value);
+                    sum += num;
+                });
+
+                return sum;
+            }
+
+            function avg() {
+                const inputs = document.querySelectorAll('.text-field')
+
+                return sum() / inputs.length;
+            }
+        </script>    
+    </body>
+</html>

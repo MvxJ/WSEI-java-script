@@ -1,0 +1,33 @@
+.key-box {
+    min-width: 25px;
+    min-height: 25px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clicked {
+    border:2px solid green;
+    background-color: lightgreen;
+}
+
+.waves {
+    border: 1px solid black;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
+.wave {
+    background-color: lightgray;
+    height: 50px;
+    width: 100%;
+    border: 1px solid black;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+#addWave {
+    width: 25px;
+    height: 25px;
+}

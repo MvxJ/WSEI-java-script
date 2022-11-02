@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+        <div id="addWave">
+            Add
+        </div>
+        <div id="keyboard" style="display: flex; width:auto; height: auto; justify-content: space-around; flex-direction: row;">
+        </div>
+        <script type="text/javascript">
+            const sounds = {
+                q: 'a', 
+                w: 'b', 
+                e: 'c', 
+                r: 'd',
+                t: 'e', 
+                y: 'f', 
+                u: 'g', 
+                i: 'h', 
+                o: 'i',
+                p: 'j', 
+                a: 'k',
+                s: 'l', 
+                d: 'm',
+                f: 'n',
+                g: 's', 
+                h: 's', 
+                j: 's', 
+                k: 's', 
+                l: 's', 
+                z: 's', 
+                x: 's', 
+                c: 's', 
+                v: 's',
+                b: 's', 
+                n: 's', 
+                m: 's'
+            };
+            const addWaveButton = document.getElementById('addWave');
+            const box = document.getElementById('keyboard');
+
+            addWaveButton.addEventListener("click", addWave);
+
+            Object.keys(sounds).forEach(key => {
+                const newKey = document.createElement('div');
+                newKey.classList.add('key-box');
+                newKey.id = key;
+                newKey.textContent = key;
+
+                box.appendChild(newKey);
+            });
+
+            document.addEventListener("keypress", onKeyPress);
+            
+            function addWave() {
+                const waveBox = document.querySelector(".waves");
+                const newWave = document.createElement('div');
+                newWave.classList.add('wave');
+
+                waveBox.appendChild(newWave);
+            }
+
+            function onKeyPress(event) {
+                const letter = event.key;
+                const keyBox = document.getElementById(letter);
+                addSoundToWave(letter);
+            }
+
+            function addSoundToWave(letter)
+            {
+                console.log(sounds[letter]);
+            }
+        </script>
+    </body>
+</html>

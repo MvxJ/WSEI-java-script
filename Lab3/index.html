@@ -4,49 +4,65 @@
     </head>
     <body>
         <div class="waves">
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
         </div>
         <div id="addWave">
             Add
         </div>
+        <div id="removeWave">
+            Remove
+        </div>
+        <div id="playSelected">
+            Play Selected
+        </div>
+        <div id="playAll">
+            Play All
+        </div>
+        <div id="soundBox"></div>
         <div id="keyboard" style="display: flex; width:auto; height: auto; justify-content: space-around; flex-direction: row;">
         </div>
         <script type="text/javascript">
             const sounds = {
-                q: 'a', 
-                w: 'b', 
-                e: 'c', 
-                r: 'd',
-                t: 'e', 
-                y: 'f', 
-                u: 'g', 
-                i: 'h', 
-                o: 'i',
-                p: 'j', 
-                a: 'k',
-                s: 'l', 
-                d: 'm',
-                f: 'n',
-                g: 's', 
-                h: 's', 
-                j: 's', 
-                k: 's', 
-                l: 's', 
-                z: 's', 
-                x: 's', 
-                c: 's', 
-                v: 's',
-                b: 's', 
-                n: 's', 
-                m: 's'
+                q: './sounds/mixkit-bad-joke-drums-2893.wav', 
+                w: './sounds/mixkit-cool-guitar-riff-2321.wav', 
+                e: './sounds/mixkit-drum-and-percussion-545.wav', 
+                r: './sounds/mixkit-drum-bass-hit-2294.wav',
+                t: './sounds/mixkit-drum-joke-accent-579.wav', 
+                y: './sounds/mixkit-electric-guitar-distorted-slide-2340.wav', 
+                u: './sounds/mixkit-funny-cartoon-tones-2892.wav', 
+                i: './sounds/mixkit-futuristic-bass-hit-2303.wav', 
+                o: './sounds/mixkit-guitar-notification-alert-2320.wav',
+                p: './sounds/mixkit-hand-tribal-drum-562.wav', 
+                a: './sounds/mixkit-happy-guitar-chords-2319.wav',
+                s: './sounds/mixkit-joke-drums-578.wav', 
+                d: './sounds/mixkit-negative-tone-interface-tap-2569.wav',
+                f: './sounds/mixkit-short-bass-hit-2299.wav',
+                g: './sounds/mixkit-short-guitar-riff-2322.wav', 
+                h: './sounds/mixkit-short-guitar-strum-2318.wav', 
+                j: './sounds/mixkit-toy-drums-and-bell-ding-560.wav', 
+                k: './sounds/mixkit-tribal-dry-drum-558.wav', 
             };
             const addWaveButton = document.getElementById('addWave');
+            const removeWaveButton = document.getElementById('removeWave');
             const box = document.getElementById('keyboard');
+            const soundBox = document.getElementById('soundBox');
+            const waveBox = document.querySelector(".waves");
 
             addWaveButton.addEventListener("click", addWave);
+            removeWaveButton.addEventListener("click", removeWave);
+
+            for (var i = 0; i < 4; i++) {
+                const newWave = document.createElement('div');
+                newWave.classList.add('wave');
+
+                if (i === 0) {
+                    newWave.classList.add('activeWave');
+                }
+
+                newWave.addEventListener("click", setAsActiveWave);
+                addPlayCheckBox(newWave);
+
+                waveBox.appendChild(newWave);
+            }
 
             Object.keys(sounds).forEach(key => {
                 const newKey = document.createElement('div');
@@ -54,27 +70,63 @@
                 newKey.id = key;
                 newKey.textContent = key;
 
+                const sound = document.createElement('audio');
+                sound.src = sounds[key];
+                sound.id = 'audio-' + key;
+
+                soundBox.appendChild(sound);
                 box.appendChild(newKey);
             });
 
             document.addEventListener("keypress", onKeyPress);
             
             function addWave() {
-                const waveBox = document.querySelector(".waves");
                 const newWave = document.createElement('div');
+                const currentWave = document.querySelector('.activeWave');
+
                 newWave.classList.add('wave');
+                newWave.classList.add('activeWave');
+                newWave.addEventListener("click", setAsActiveWave);
+                addPlayCheckBox(newWave);
+                currentWave.classList.remove('activeWave');
 
                 waveBox.appendChild(newWave);
+            }
+
+            function removeWave() {
+                const currentWave = document.querySelector('.activeWave');
+                waveBox.removeChild(currentWave);
+                const waves = document.querySelectorAll('.wave');
+                waves[0].classList.add('activeWave');
+            }
+
+            function setAsActiveWave(event) {
+                const currentWave = document.querySelector('.activeWave');
+                currentWave.classList.remove('activeWave');
+                event.srcElement.classList.add('activeWave');
+            }
+
+            function addPlayCheckBox(element) {
+                const checkBox = document.createElement('input');
+                checkBox.type = "checkbox";
+                checkBox.classList.add('playCheckBox');
+
+                element.appendChild(checkBox);
             }
 
             function onKeyPress(event) {
                 const letter = event.key;
                 const keyBox = document.getElementById(letter);
+                playSound(letter);
                 addSoundToWave(letter);
             }
 
-            function addSoundToWave(letter)
-            {
+            function playSound(letter) {
+                const audio = document.getElementById('audio-' + letter);
+                audio.play();
+            }
+
+            function addSoundToWave(letter) {
                 console.log(sounds[letter]);
             }
         </script>

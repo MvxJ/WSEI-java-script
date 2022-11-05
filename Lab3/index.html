@@ -18,6 +18,10 @@
             <div id="playAll" class="btn">
                 Play All
             </div>
+            <div id="metronom" class="inActiveMetronom btn">
+                Metronom <input type="text" name="metronom-tick" value="60" id="repeatPerMin">
+            </div>
+            
         </div>
 
         <div id="soundBox"></div>
@@ -42,13 +46,18 @@
                 g: './sounds/mixkit-short-guitar-riff-2322.wav', 
                 h: './sounds/mixkit-short-guitar-strum-2318.wav', 
                 j: './sounds/mixkit-toy-drums-and-bell-ding-560.wav', 
-                k: './sounds/mixkit-tribal-dry-drum-558.wav', 
+                k: './sounds/mixkit-tribal-dry-drum-558.wav',
+                metronom: './sounds/mixkit-tribal-dry-drum-558.wav' 
             };
             const addWaveButton = document.getElementById('addWave');
             const removeWaveButton = document.getElementById('removeWave');
+            const playSelected = document.getElementById("playSelected");
+            const playAll = document.getElementById("playAll");
+            const metronom = document.getElementById("metronom");
             const box = document.getElementById('keyboard');
             const soundBox = document.getElementById('soundBox');
             const waveBox = document.querySelector(".waves");
+            let interval = null;
 
             addWaveButton.addEventListener("click", addWave);
             removeWaveButton.addEventListener("click", removeWave);
@@ -56,6 +65,7 @@
             for (var i = 0; i < 4; i++) {
                 const newWave = document.createElement('div');
                 newWave.classList.add('wave');
+                newWave.id = generateId(6);
 
                 if (i === 0) {
                     newWave.classList.add('activeWave');
@@ -68,21 +78,40 @@
             }
 
             Object.keys(sounds).forEach(key => {
-                const newKey = document.createElement('div');
-                newKey.classList.add('key-box');
-                newKey.id = key;
-                newKey.textContent = key;
+                if (key != "metronom") {
+                    const newKey = document.createElement('div');
+                    newKey.classList.add('key-box');
+                    newKey.id = key;
+                    newKey.textContent = key;
+                    box.appendChild(newKey);
+                }
 
                 const sound = document.createElement('audio');
                 sound.src = sounds[key];
                 sound.id = 'audio-' + key;
-
                 soundBox.appendChild(sound);
-                box.appendChild(newKey);
             });
 
             document.addEventListener("keypress", onKeyPress);
             
+            metronom.addEventListener("click", event => {
+                if (metronom.classList.contains("inActiveMetronom")) {
+                    metronom.classList.replace("inActiveMetronom", "activeMetronom");
+                    const repeatPerMin = document.getElementById("repeatPerMin").value;
+                    interval = setInterval(playMetronom, (60000/repeatPerMin));
+                } else {
+                    metronom.classList.replace("activeMetronom", "inActiveMetronom");
+                    const audio = document.getElementById('audio-metronom');
+                    audio.pause();
+                    audio.currentTime = 0;
+                    clearInterval(interval);
+                }
+            });
+
+            function playMetronom(repeat) {
+                playSound("metronom");
+            }
+
             function addWave() {
                 const newWave = document.createElement('div');
                 const currentWave = document.querySelector('.activeWave');
@@ -90,6 +119,7 @@
                 newWave.classList.add('wave');
                 newWave.classList.add('activeWave');
                 newWave.addEventListener("click", setAsActiveWave);
+                newWave.id = generateId(6);
                 addPlayCheckBox(newWave);
                 currentWave.classList.remove('activeWave');
 
@@ -113,6 +143,7 @@
                 const checkBox = document.createElement('input');
                 checkBox.type = "checkbox";
                 checkBox.classList.add('playCheckBox');
+                checkBox.value = element.id;
 
                 element.appendChild(checkBox);
             }
@@ -127,6 +158,17 @@
             function playSound(letter) {
                 const audio = document.getElementById('audio-' + letter);
                 audio.play();
+            }
+
+            function generateId(length) {
+                let id = '';
+                let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let charactersLength = characters.length;
+                for (var i = 0; i < length; i++) {
+                    id += characters.charAt(Math.floor(Math.random() * charactersLength));
+                }
+
+                return id;
             }
 
             function addSoundToWave(letter) {

@@ -58,9 +58,11 @@
             const soundBox = document.getElementById('soundBox');
             const waveBox = document.querySelector(".waves");
             let interval = null;
+            let records = {};
 
             addWaveButton.addEventListener("click", addWave);
             removeWaveButton.addEventListener("click", removeWave);
+            playSelected.addEventListener("click", playSelectedRecords);
 
             for (var i = 0; i < 4; i++) {
                 const newWave = document.createElement('div');
@@ -129,6 +131,11 @@
             function removeWave() {
                 const currentWave = document.querySelector('.activeWave');
                 waveBox.removeChild(currentWave);
+
+                if (currentWave.id in records) {
+                    delete records[currentWave.id];
+                }
+
                 const waves = document.querySelectorAll('.wave');
                 waves[0].classList.add('activeWave');
             }
@@ -172,7 +179,36 @@
             }
 
             function addSoundToWave(letter) {
-                console.log(sounds[letter]);
+                const activeWave = document.querySelector('.activeWave');
+
+                if (!(activeWave.id in records)) {
+                    records[activeWave.id] = [];
+                }
+
+                records[activeWave.id].push({audio: document.getElementById('audio-' + letter), startTime: new Date()});
+            }
+
+            function playSelectedRecords() {
+                const selectedWaves = getWavesToPlay(true);
+            }
+
+            function getWavesToPlay(getOnlyChecked) {
+                const checkBoxes = document.querySelectorAll('.playCheckBox');
+                const selectedWaves = [];
+
+                if (getOnlyChecked === true) {
+                    checkBoxes.forEach(box => {
+                        if (box.checked) {
+                            selectedWaves.push(box.value)
+                        }
+                    });
+                } else {
+                    checkBoxes.forEach(box => {
+                        selectedWaves.push(box.value)
+                    });
+                }
+
+                return selectedWaves;
             }
         </script>
     </body>

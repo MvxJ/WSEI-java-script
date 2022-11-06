@@ -12,16 +12,27 @@
             <div id="removeWave" class="btn">
                 Remove
             </div>
+            <div>
+                Play in loop
+                <input type="checkbox" name="loop" id="playInLoop">
+            </div>
             <div id="playSelected" class="btn">
                 Play Selected
+            </div>
+            <div>
+                Wave length in seconds
+                <input type="number" value="120" id="timeInSeconds">
             </div>
             <div id="playAll" class="btn">
                 Play All
             </div>
             <div id="metronom" class="inActiveMetronom btn">
-                Metronom <input type="text" name="metronom-tick" value="60" id="repeatPerMin">
+                Metronom
             </div>
-            
+            <div>
+                Metronom interval
+                <input type="text" name="metronom-tick" value="60" id="repeatPerMin">
+            </div>
         </div>
 
         <div id="soundBox"></div>
@@ -157,7 +168,7 @@
             }
 
             function onKeyPress(event) {
-                const letter = event.key;
+                const letter = event.key.toLowerCase();
                 const keyBox = document.getElementById(letter);
                 playSound(letter);
                 addSoundToWave(letter);
@@ -200,25 +211,37 @@
             }
 
             function prepareTrack(waves) {
+                const playInLoop = document.getElementById("playInLoop");
+                const waveLength = document.getElementById("timeInSeconds");
+
+                if (playInLoop.checked == 1) {
+                    setInterval(function() {
+                        playTracks(waves)
+                    }, (waveLength * 1000));
+                } else {
+                    playTracks(waves);
+                }
+            }
+
+            function playTracks(waves) {
                 if (Object.keys(records).length > 0) {
                     waves.forEach(wave => {
-                        console.log(records);
-                        console.log(wave);
-                        if (Object.keys(records[wave]).length > 0) {
+                        if (wave in records) {
                             let currentTime = 0;
                             Object.keys(records[wave]).forEach(key => {
                                 if (key == 0) {
                                     currentTime = 0;
                                 } else {
-                                    currentTime += records[wave][key].startTime.getTime() - records[wave][key-1].startTime.getTime();
+                                    currentTime += records[wave][key].startTime.getTime() - records[wave][key - 1].startTime.getTime();
                                 }
-                                setTimeout(function() {
+
+                                setTimeout(function () {
                                     records[wave][key].audio.play();
                                 }, (currentTime));
                             });
                         }
                     });
-                } 
+                }
             }
 
             function getWavesToPlay(getOnlyChecked) {

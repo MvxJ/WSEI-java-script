@@ -1,0 +1,120 @@
+Index: Lab3/index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><html>\n    <head>\n        <link rel=\"stylesheet\" href=\"style.css\">\n    </head>\n    <body>\n        <div class=\"waves\">\n        </div>\n        <div class=\"controls\">\n            <div id=\"addWave\" class=\"btn\">\n                Add\n            </div>\n            <div id=\"removeWave\" class=\"btn\">\n                Remove\n            </div>\n            <div>\n                Play in loop\n                <input type=\"checkbox\" name=\"loop\" id=\"playInLoop\">\n            </div>\n            <div id=\"playSelected\" class=\"btn\">\n                Play Selected\n            </div>\n            <div>\n                Wave length in seconds\n                <input type=\"number\" value=\"120\" id=\"timeInSeconds\">\n            </div>\n            <div id=\"playAll\" class=\"btn\">\n                Play All\n            </div>\n            <div id=\"metronom\" class=\"inActiveMetronom btn\">\n                Metronom\n            </div>\n            <div>\n                Metronom interval\n                <input type=\"text\" name=\"metronom-tick\" value=\"60\" id=\"repeatPerMin\">\n            </div>\n        </div>\n\n        <div id=\"soundBox\"></div>\n        <div id=\"keyboard\" style=\"display: flex; width:auto; height: auto; justify-content: space-around; flex-direction: row;\">\n        </div>\n        <script type=\"text/javascript\">\n            const sounds = {\n                q: './sounds/mixkit-bad-joke-drums-2893.wav', \n                w: './sounds/mixkit-cool-guitar-riff-2321.wav', \n                e: './sounds/mixkit-drum-and-percussion-545.wav', \n                r: './sounds/mixkit-drum-bass-hit-2294.wav',\n                t: './sounds/mixkit-drum-joke-accent-579.wav', \n                y: './sounds/mixkit-electric-guitar-distorted-slide-2340.wav', \n                u: './sounds/mixkit-funny-cartoon-tones-2892.wav', \n                i: './sounds/mixkit-futuristic-bass-hit-2303.wav', \n                o: './sounds/mixkit-guitar-notification-alert-2320.wav',\n                p: './sounds/mixkit-hand-tribal-drum-562.wav', \n                a: './sounds/mixkit-happy-guitar-chords-2319.wav',\n                s: './sounds/mixkit-joke-drums-578.wav', \n                d: './sounds/mixkit-negative-tone-interface-tap-2569.wav',\n                f: './sounds/mixkit-short-bass-hit-2299.wav',\n                g: './sounds/mixkit-short-guitar-riff-2322.wav', \n                h: './sounds/mixkit-short-guitar-strum-2318.wav', \n                j: './sounds/mixkit-toy-drums-and-bell-ding-560.wav', \n                k: './sounds/mixkit-tribal-dry-drum-558.wav',\n                metronom: './sounds/mixkit-tribal-dry-drum-558.wav' \n            };\n            const addWaveButton = document.getElementById('addWave');\n            const removeWaveButton = document.getElementById('removeWave');\n            const playSelected = document.getElementById(\"playSelected\");\n            const playAll = document.getElementById(\"playAll\");\n            const metronom = document.getElementById(\"metronom\");\n            const box = document.getElementById('keyboard');\n            const soundBox = document.getElementById('soundBox');\n            const waveBox = document.querySelector(\".waves\");\n            let interval = null;\n            let records = {};\n\n            addWaveButton.addEventListener(\"click\", addWave);\n            removeWaveButton.addEventListener(\"click\", removeWave);\n            playSelected.addEventListener(\"click\", playSelectedRecords);\n            playAll.addEventListener(\"click\", playAllRecords);\n\n            for (var i = 0; i < 4; i++) {\n                const newWave = document.createElement('div');\n                newWave.classList.add('wave');\n                newWave.id = generateId(6);\n\n                if (i === 0) {\n                    newWave.classList.add('activeWave');\n                }\n\n                newWave.addEventListener(\"click\", setAsActiveWave);\n                addPlayCheckBox(newWave);\n\n                waveBox.appendChild(newWave);\n            }\n\n            Object.keys(sounds).forEach(key => {\n                if (key != \"metronom\") {\n                    const newKey = document.createElement('div');\n                    newKey.classList.add('key-box');\n                    newKey.id = key;\n                    newKey.textContent = key;\n                    box.appendChild(newKey);\n                }\n\n                const sound = document.createElement('audio');\n                sound.src = sounds[key];\n                sound.id = 'audio-' + key;\n                soundBox.appendChild(sound);\n            });\n\n            document.addEventListener(\"keypress\", onKeyPress);\n            \n            metronom.addEventListener(\"click\", event => {\n                if (metronom.classList.contains(\"inActiveMetronom\")) {\n                    metronom.classList.replace(\"inActiveMetronom\", \"activeMetronom\");\n                    const repeatPerMin = document.getElementById(\"repeatPerMin\").value;\n                    interval = setInterval(playMetronom, (60000/repeatPerMin));\n                } else {\n                    metronom.classList.replace(\"activeMetronom\", \"inActiveMetronom\");\n                    const audio = document.getElementById('audio-metronom');\n                    audio.pause();\n                    audio.currentTime = 0;\n                    clearInterval(interval);\n                }\n            });\n\n            function playMetronom(repeat) {\n                playSound(\"metronom\");\n            }\n\n            function addWave() {\n                const newWave = document.createElement('div');\n                const currentWave = document.querySelector('.activeWave');\n\n                newWave.classList.add('wave');\n                newWave.classList.add('activeWave');\n                newWave.addEventListener(\"click\", setAsActiveWave);\n                newWave.id = generateId(6);\n                addPlayCheckBox(newWave);\n                currentWave.classList.remove('activeWave');\n\n                waveBox.appendChild(newWave);\n            }\n\n            function removeWave() {\n                const currentWave = document.querySelector('.activeWave');\n                waveBox.removeChild(currentWave);\n\n                if (currentWave.id in records) {\n                    delete records[currentWave.id];\n                }\n\n                const waves = document.querySelectorAll('.wave');\n                waves[0].classList.add('activeWave');\n            }\n\n            function setAsActiveWave(event) {\n                const currentWave = document.querySelector('.activeWave');\n                currentWave.classList.remove('activeWave');\n                event.srcElement.classList.add('activeWave');\n            }\n\n            function addPlayCheckBox(element) {\n                const checkBox = document.createElement('input');\n                checkBox.type = \"checkbox\";\n                checkBox.classList.add('playCheckBox');\n                checkBox.value = element.id;\n\n                element.appendChild(checkBox);\n            }\n\n            function onKeyPress(event) {\n                const letter = event.key.toLowerCase();\n                const keyBox = document.getElementById(letter);\n                playSound(letter);\n                addSoundToWave(letter);\n            }\n\n            function playSound(letter) {\n                const audio = document.getElementById('audio-' + letter);\n                audio.play();\n            }\n\n            function generateId(length) {\n                let id = '';\n                let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\n                let charactersLength = characters.length;\n                for (var i = 0; i < length; i++) {\n                    id += characters.charAt(Math.floor(Math.random() * charactersLength));\n                }\n\n                return id;\n            }\n\n            function addSoundToWave(letter) {\n                const activeWave = document.querySelector('.activeWave');\n\n                if (!(activeWave.id in records)) {\n                    records[activeWave.id] = [];\n                }\n\n                records[activeWave.id].push({audio: document.getElementById('audio-' + letter), startTime: new Date()});\n            }\n\n            function playSelectedRecords() {\n                const selectedWaves = getWavesToPlay(true);\n                prepareTrack(selectedWaves);\n            }\n\n            function playAllRecords() {\n                const selectedWaves = getWavesToPlay(false);\n                prepareTrack(selectedWaves);\n            }\n\n            function prepareTrack(waves) {\n                const playInLoop = document.getElementById(\"playInLoop\");\n                const waveLength = document.getElementById(\"timeInSeconds\");\n\n                if (playInLoop.checked == 1) {\n                    setInterval(function() {\n                        playTracks(waves)\n                    }, (waveLength * 1000));\n                } else {\n                    playTracks(waves);\n                }\n            }\n\n            function playTracks(waves) {\n                if (Object.keys(records).length > 0) {\n                    waves.forEach(wave => {\n                        if (wave in records) {\n                            let currentTime = 0;\n                            Object.keys(records[wave]).forEach(key => {\n                                if (key == 0) {\n                                    currentTime = 0;\n                                } else {\n                                    currentTime += records[wave][key].startTime.getTime() - records[wave][key - 1].startTime.getTime();\n                                }\n\n                                setTimeout(function () {\n                                    records[wave][key].audio.play();\n                                }, (currentTime));\n                            });\n                        }\n                    });\n                }\n            }\n\n            function getWavesToPlay(getOnlyChecked) {\n                const checkBoxes = document.querySelectorAll('.playCheckBox');\n                const selectedWaves = [];\n\n                if (getOnlyChecked == true) {\n                    checkBoxes.forEach(box => {\n                        if (box.checked) {\n                            selectedWaves.push(box.value)\n                        }\n                    });\n                } else {\n                    checkBoxes.forEach(box => {\n                        selectedWaves.push(box.value)\n                    });\n                }\n\n                return selectedWaves;\n            }\n        </script>\n    </body>\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Lab3/index.html b/Lab3/index.html
+--- a/Lab3/index.html	(revision bc2274e9ba985f9e238b6f7ac0351bddc2ed3193)
++++ b/Lab3/index.html	(date 1668425375318)
+@@ -1,32 +1,33 @@
+ <html>
+     <head>
++        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+         <link rel="stylesheet" href="style.css">
+     </head>
+     <body>
+         <div class="waves">
+         </div>
+         <div class="controls">
+-            <div id="addWave" class="btn">
++            <div id="addWave" class="btn btn-primary">
+                 Add
+             </div>
+-            <div id="removeWave" class="btn">
++            <div id="removeWave" class="btn btn-primary">
+                 Remove
+             </div>
+             <div>
+                 Play in loop
+                 <input type="checkbox" name="loop" id="playInLoop">
+             </div>
+-            <div id="playSelected" class="btn">
++            <div id="playSelected" class="btn btn-primary">
+                 Play Selected
+             </div>
+             <div>
+                 Wave length in seconds
+                 <input type="number" value="120" id="timeInSeconds">
+             </div>
+-            <div id="playAll" class="btn">
++            <div id="playAll" class="btn btn-primary">
+                 Play All
+             </div>
+-            <div id="metronom" class="inActiveMetronom btn">
++            <div id="metronom" class="inActiveMetronom btn btn-success">
+                 Metronom
+             </div>
+             <div>
+Index: Lab3/style.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>.key-box {\n    min-width: 25px;\n    min-height: 25px;\n    border: 1px solid black;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n.controls {\n    width: 100%;\n    display: flex;\n    flex-direction: row;\n    justify-content: space-around;\n    margin-bottom: 25px;\n}\n\n.btn {\n    text-align: center;\n    min-width: 200px;\n    max-width: 200px;\n    max-height: 35px;\n    min-height: 35px;\n    border:1px solid black;\n    line-height: 35px;\n}\n\n.clicked {\n    border:2px solid green;\n    background-color: lightgreen;\n}\n\n.waves {\n    border: 1px solid black;\n    padding: 5px;\n    margin-bottom: 15px;\n}\n\n.wave {\n    background-color: lightgray;\n    height: 50px;\n    width: 100%;\n    border: 1px solid black;\n    margin-bottom: 5px;\n    margin-top: 5px;\n}\n\n.activeWave {\n    border: 2px solid greenyellow;\n}\n\n#addWave {\n    width: 25px;\n    height: 25px;\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Lab3/style.css b/Lab3/style.css
+--- a/Lab3/style.css	(revision bc2274e9ba985f9e238b6f7ac0351bddc2ed3193)
++++ b/Lab3/style.css	(date 1668425406851)
+@@ -21,8 +21,6 @@
+     max-width: 200px;
+     max-height: 35px;
+     min-height: 35px;
+-    border:1px solid black;
+-    line-height: 35px;
+ }
+ 
+ .clicked {
+Index: Lab1/index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\n<html>\n    <head>\n    </head>\n    <body>\n        \n        <div class=\"inputs-block\">\n            <input type=\"text\" class='text-field'>\n            <input type=\"text\" class='text-field'>\n            <input type=\"text\" class='text-field'>\n        </div>\n\n        <input type=\"button\" name=\"add\" id=\"addButton\" value=\"Add more fields\">\n        <input type=\"button\" type=\"submit\" value=\"CALCULATE\" id=\"button\">\n\n        <p class=\"results\"></p>\n        <script type=\"text/javascript\">\n            const addButton = document.getElementById('addButton');\n            const button = document.getElementById(\"button\");\n\n            this.addEvents();\n\n            addButton.addEventListener('click', () => {\n                const inputBlock = document.querySelector('.inputs-block');\n                const newInput = document.createElement('input');\n                newInput.classList.add('text-field');\n\n                inputBlock.appendChild(newInput);\n\n                this.addEvents();\n            });\n\n            button.addEventListener('click', () => {\n                this.calculate();\n            });\n\n            function addEvents()\n            {\n                const textFields = document.querySelectorAll('.text-field');\n\n                textFields.forEach(field => {\n                    field.addEventListener('input', () => {\n                        this.calculate();\n                    });\n                });\n            }\n\n            function calculate()\n            {\n                const inputs = document.querySelectorAll('.text-field');\n                const avg = this.avg();\n                const sum = this.sum();\n                const min = this.getMinFromArray(inputs);\n                const max = this.getMaxFromArray(inputs);\n\n                const results = document.querySelector('.results');\n                results.innerHTML = \"MIN - \" + min + \" MAX - \" + max + \" SUM - \" + sum + \" AVG - \" + avg;\n            }\n\n            function getMinFromArray(inputs)\n            {\n                let array = [];\n\n                inputs.forEach(input => {\n                    array.push(parseFloat(input.value));\n                });\n\n                return Math.min(...array);\n            }\n\n            function getMaxFromArray(inputs)\n            {\n                let array = [];\n\n                inputs.forEach(input => {\n                    array.push(input.value);\n                });\n\n                return Math.max(...array);\n            }\n\n            function sum() {\n                const inputs = document.querySelectorAll('.text-field');\n                let sum = 0;\n\n                inputs.forEach(input => {\n                    const num =  parseFloat(input.value);\n                    sum += num;\n                });\n\n                return sum;\n            }\n\n            function avg() {\n                const inputs = document.querySelectorAll('.text-field')\n\n                return sum() / inputs.length;\n            }\n        </script>    \n    </body>\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Lab1/index.html b/Lab1/index.html
+--- a/Lab1/index.html	(revision bc2274e9ba985f9e238b6f7ac0351bddc2ed3193)
++++ b/Lab1/index.html	(date 1668359153971)
+@@ -1,19 +1,23 @@
+ <!DOCTYPE html>
+ <html>
+     <head>
++        <link rel="stylesheet" href="styles.css">
++        <meta name="viewport" content="width=device-width, initial-scale=1">
++        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+     </head>
+     <body>
+         
+-        <div class="inputs-block">
+-            <input type="text" class='text-field'>
+-            <input type="text" class='text-field'>
+-            <input type="text" class='text-field'>
+-        </div>
+-
+-        <input type="button" name="add" id="addButton" value="Add more fields">
+-        <input type="button" type="submit" value="CALCULATE" id="button">
+-
+-        <p class="results"></p>
++        <div class="calculator">
++            <div class="inputs-block">
++                <input type="text" class='text-field form-control'>
++                <input type="text" class='text-field form-control'>
++                <input type="text" class='text-field form-control'>
++            </div>
++            <p class="results"></p>
++            <input type="button" name="add" id="addButton" value="Add more fields" class="btn btn-primary">
++            <input type="button" type="submit" value="Calculate" id="button" class="btn btn-primary">
++        </div>
++        
+         <script type="text/javascript">
+             const addButton = document.getElementById('addButton');
+             const button = document.getElementById("button");
+@@ -24,6 +28,7 @@
+                 const inputBlock = document.querySelector('.inputs-block');
+                 const newInput = document.createElement('input');
+                 newInput.classList.add('text-field');
++                newInput.classList.add('form-control');
+ 
+                 inputBlock.appendChild(newInput);
+ 

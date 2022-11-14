@@ -1,42 +1,47 @@
 <html>
     <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div class="waves">
         </div>
         <div class="controls">
-            <div id="addWave" class="btn">
-                Add
+            <div id="addNewWave" class="btn btn-primary">
+                Add Wave
             </div>
-            <div id="removeWave" class="btn">
-                Remove
+            <div id="removeWave" class="btn btn-primary">
+                Remove Wave
             </div>
-            <div>
-                Play in loop
-                <input type="checkbox" name="loop" id="playInLoop">
-            </div>
-            <div id="playSelected" class="btn">
+            <div id="playSelected" class="btn btn-primary">
                 Play Selected
             </div>
-            <div>
-                Wave length in seconds
-                <input type="number" value="120" id="timeInSeconds">
-            </div>
-            <div id="playAll" class="btn">
+            <div id="playAll" class="btn btn-primary">
                 Play All
             </div>
-            <div id="metronom" class="inActiveMetronom btn">
+            <div id="metronom" class="inActiveMetronom btn btn-success">
                 Metronom
             </div>
-            <div>
-                Metronom interval
-                <input type="text" name="metronom-tick" value="60" id="repeatPerMin">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Wave length in seconds</span>
+                </div>
+                <input class="form-control" type="number" value="120" id="timeInSeconds">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Metronom interval</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Username" aria-label="Username" name="metronom-tick" value="60" id="repeatPerMin">
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="playInLoop">
+                <label class="form-check-label" for="playInLoop">Play in loop</label>
             </div>
         </div>
 
         <div id="soundBox"></div>
-        <div id="keyboard" style="display: flex; width:auto; height: auto; justify-content: space-around; flex-direction: row;">
+        <div id="keyboard">
         </div>
         <script type="text/javascript" src="./drumkit.js"></script>
     </body>

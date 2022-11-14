@@ -19,7 +19,7 @@ const sounds = {
     k: './sounds/mixkit-tribal-dry-drum-558.wav',
     metronom: './sounds/mixkit-tribal-dry-drum-558.wav' 
 };
-const addWaveButton = document.getElementById('addWave');
+const addWaveButton = document.getElementById('addNewWave');
 const removeWaveButton = document.getElementById('removeWave');
 const playSelected = document.getElementById("playSelected");
 const playAll = document.getElementById("playAll");
@@ -46,6 +46,7 @@ for (var i = 0; i < 4; i++) {
 
     newWave.addEventListener("click", setAsActiveWave);
     addPlayCheckBox(newWave);
+    addClearWaveRecordButton(newWave);
 
     waveBox.appendChild(newWave);
 }
@@ -54,6 +55,7 @@ Object.keys(sounds).forEach(key => {
     if (key != "metronom") {
         const newKey = document.createElement('div');
         newKey.classList.add('key-box');
+        newKey.classList.add('btn')
         newKey.id = key;
         newKey.textContent = key;
         box.appendChild(newKey);
@@ -71,9 +73,11 @@ metronom.addEventListener("click", event => {
     if (metronom.classList.contains("inActiveMetronom")) {
         metronom.classList.replace("inActiveMetronom", "activeMetronom");
         const repeatPerMin = document.getElementById("repeatPerMin").value;
+        metronom.classList.replace('btn-success', 'btn-danger');
         interval = setInterval(playMetronom, (60000/repeatPerMin));
     } else {
         metronom.classList.replace("activeMetronom", "inActiveMetronom");
+        metronom.classList.replace('btn-danger', 'btn-success');
         const audio = document.getElementById('audio-metronom');
         audio.pause();
         audio.currentTime = 0;
@@ -94,6 +98,7 @@ function addWave() {
     newWave.addEventListener("click", setAsActiveWave);
     newWave.id = generateId(6);
     addPlayCheckBox(newWave);
+    addClearWaveRecordButton(newWave);
     currentWave.classList.remove('activeWave');
 
     waveBox.appendChild(newWave);
@@ -124,6 +129,17 @@ function addPlayCheckBox(element) {
     checkBox.value = element.id;
 
     element.appendChild(checkBox);
+}
+
+function addClearWaveRecordButton(element) {
+    const button = document.createElement('div');
+    button.classList.add('clearWaveBtn');
+    button.textContent = "Clear wave";
+    button.addEventListener("click", event => {
+        records[element.id] = [];
+    });
+
+    element.appendChild(button);
 }
 
 function onKeyPress(event) {

@@ -1,24 +1,21 @@
-* {
-    margin: 0 auto;
-}
-
 body {
     background: rgb(236,125,173);
     background: radial-gradient(circle, rgba(236,125,173,1) 0%, rgba(228,233,148,1) 100%);
-    padding: 15px;
     overflow: hidden;
 }
 
 .mainContainer {
     display: flex;
+    justify-content: space-between;
 }
 
 .actionBox {
     width: 30vw;
     height: 100vh;
-    border: 1px solid red;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    padding: 5px;
 }
 
 .btn {
@@ -29,7 +26,60 @@ body {
     width: 65vw;
     height: 100vh;
     overflow-y: scroll;
-    border:1px solid green;
+    display: flex;
+    flex-grow: 4;
+    flex-wrap: wrap;
+
+}
+
+.note {
+    background-color: #feff9c;
+    min-width:300px;
+    min-height: 300px;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 10px;
+}
+
+.note .noteHeader {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    height: 25px;
+    padding: 5px;
+    margin-bottom: 35px;
+    width: 100%;
+    text-align: left;
+}
+
+.note .noteHeader .noteTitle {
+    font-weight: 800;
+    font-size: 18px;
+    width: 100%;
+}
+
+.note .noteHeader .noteDate {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 100;
+    width: 100%;
+}
+
+.note .noteHeader .noteTitle .noteTag {
+    min-width: 35px;
+    margin-left: 15px;
+    width: auto;
+    padding: 0 5px 0 5px;
+    background-color: lightblue;
+    border-radius: 15px;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.note .noteContent {
+    text-decoration: underline;
 }
 
 #noteForm {

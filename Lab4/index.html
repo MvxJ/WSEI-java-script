@@ -11,14 +11,50 @@
                     <div id="closeModalButton">Close</div>
                 </div>
                 <div class="fields">
-                    <input type="text" class="form-control" name="noteTitle" id="noteTitle">
-                    <input type="date" class="form-control"name="noteDate" id="noteDate">
-                    <input type="date" class="form-control" name="rememberDate" id="rememberDate">
-                    <input type="text" class="form-control" name="noteTag" id="noteTag">
-                    <textarea name="Text1" cols="40" rows="5" name="noteContent" id="noteContent"></textarea>
-                    <div class="btn btn-primary" id="saveNote">
-                        Save
-                    </div>
+                    <form>
+                        <input type="hidden" id="formAction" value="" name="formAction">
+                        <div class="row">
+                            <div class="col-sm">
+                                <label for="noteDate">Title</label>
+                                <input type="text" class="form-control" name="noteTitle" id="noteTitle" required>
+                            </div>
+                            <div class="col-sm">
+                                <label for="noteTag">Tag</label>
+                                <input type="text" class="form-control" name="noteTag" id="noteTag">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <label for="noteDate">Date of Event</label>
+                                <input type="date" class="form-control"name="noteDate" id="noteDate" required>
+                            </div>
+                            <div class="col-sm">
+                                <div id="reminderFields" class="hidden">
+                                    <label for="rememberDate">Reminder date</label>
+                                    <input type="datetime-local" class="form-control" name="rememberDate" id="rememberDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="reminder">
+                                    <label class="form-check-label" for="reminder">Reminder</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="toDoList">
+                                    <label class="form-check-label" for="toDoList">Add to do list in note</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <label for="noteContent">Text</label>
+                                <textarea name="Text1" cols="40" rows="5" name="noteContent" class="form-control" id="noteContent" required></textarea>
+                                <div class="btn btn-primary" id="saveNote">Save</div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="actionBox">

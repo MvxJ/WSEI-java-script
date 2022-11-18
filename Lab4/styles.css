@@ -18,6 +18,10 @@ body {
     padding: 5px;
 }
 
+#closeModalButton {
+    cursor: pointer;
+}
+
 .btn {
     margin-top: 15px !important;
 }
@@ -100,9 +104,13 @@ body {
 }
 
 .hidden {
-    visibility: hidden;
+    display: none;
 }
 
 .visibe {
-    visibility: visible;
+    display: block;
+}
+
+.fields {
+    padding: 5px;
 }

@@ -45,6 +45,7 @@ function fetchNotes() {
 
     if (storageNotes != null) {
         notes = JSON.parse(storageNotes);
+        notes.reverse();
     }
     
     if (Object.keys(notes).length === 0) {
@@ -61,7 +62,7 @@ function saveNote() {
     const formAction = document.getElementById("formAction").value;
    
     const note = {
-        id: generateId(6), // TODO:: IF note exists get current id
+        id: document.getElementById("noteId").value != "" ? document.getElementById("noteId").value : generateId(6),
         createdAt: Date.now(),
         title: document.getElementById("noteTitle").value,
         date: document.getElementById("noteDate").value,
@@ -74,7 +75,8 @@ function saveNote() {
     if (formAction === "create") {
         notes.push(note);
     } else if (formAction === "edit") {
-        notes[Object.keys(noteToDelete)] = note; //TODO:: Pass note key to form
+        const noteIndex = document.getElementById("noteIndex").value;
+        notes[noteIndex] = note;
     }
 
     clearForm();
@@ -147,6 +149,8 @@ function editNote(note) {
     const form = document.getElementById("noteForm");
     form.classList.replace("hidden", "visible");    
     document.getElementById("noteTitle").value = note.title;
+    document.getElementById("noteIndex").value = notes.indexOf(note);
+    document.getElementById("noteId").value = note.id;
     document.getElementById("noteDate").value = note.date;
     document.getElementById("noteContent").value = note.content;
     document.getElementById("noteTag").value = note.tag;
@@ -219,6 +223,9 @@ function clearForm() {
     document.getElementById("reminder").checked == 0;
     document.getElementById("rememberDate").value = "";
     document.getElementById("formAction").value = "";
+    document.getElementById("noteId").value = "";
+    document.getElementById("noteIndex").value = "";
+    reminderFields.classList.replace("visible", "hidden");
 }
 
 function closeDeleteModal() {
@@ -228,7 +235,7 @@ function closeDeleteModal() {
 
 function confirmDeleteNote() {
     if (noteToDelete != null) {
-        notes.splice(Object.keys(noteToDelete), 1);
+        notes.splice(notes.indexOf(noteToDelete), 1);
         noteToDelete = null;
         closeDeleteModal();
         saveNotes();

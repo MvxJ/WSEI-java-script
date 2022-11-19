@@ -3,9 +3,19 @@ const closeModalButton = document.getElementById("closeModalButton");
 const addNoteButton = document.getElementById("createNote");
 const saveNoteButton = document.getElementById("saveNote");
 const reminderSwitch = document.getElementById("reminder");
+const closeDeleteModalButtons = document.querySelectorAll(".closeModalDeleteButton");
+const deleteModal = document.getElementById("deleteModal");
+const deleteNoteButton = document.getElementById("deleteNoteButton");
 let notes = [];
+let noteToDelete = null;
 
 fetchNotes();
+
+deleteNoteButton.addEventListener("click", confirmDeleteNote)
+
+closeDeleteModalButtons.forEach(button => {
+    button.addEventListener("click", closeDeleteModal)
+});
 
 reminderSwitch.addEventListener("click", event => {
     const reminderFields = document.getElementById("reminderFields");
@@ -18,7 +28,7 @@ reminderSwitch.addEventListener("click", event => {
 
 closeModalButton.addEventListener("click", event => {
     const form = document.getElementById("noteForm");
-    document.getElementById("formAction").value = "";
+    clearForm();
     form.classList.replace('visible', 'hidden');
 });
 
@@ -48,8 +58,10 @@ function fetchNotes() {
 }
 
 function saveNote() {
+    const formAction = document.getElementById("formAction").value;
+   
     const note = {
-        id: generateId(6),
+        id: generateId(6), // TODO:: IF note exists get current id
         createdAt: Date.now(),
         title: document.getElementById("noteTitle").value,
         date: document.getElementById("noteDate").value,
@@ -59,7 +71,12 @@ function saveNote() {
         reminderDate: document.getElementById("reminder").checked == 1 ? document.getElementById("rememberDate").value : null,
     }
 
-    notes.push(note);
+    if (formAction === "create") {
+        notes.push(note);
+    } else if (formAction === "edit") {
+        notes[Object.keys(noteToDelete)] = note; //TODO:: Pass note key to form
+    }
+
     clearForm();
     saveNotes()
     const form = document.getElementById("noteForm");
@@ -108,7 +125,9 @@ function createEditNoteButton(element, note) {
     const button = document.createElement('div');
     button.classList.add("edit-note-button");
     button.textContent = "Edit";
-    // button.addEventListener("click", editNote(note));
+    button.addEventListener("click", event => {
+        editNote(note);
+    });
 
     element.appendChild(button);
 }
@@ -117,9 +136,24 @@ function createDeleteNoteButton(element, note) {
     const button = document.createElement('div');
     button.classList.add("delete-note-button");
     button.textContent = "Delete";
-    button.addEventListener("click", deleteNote(note));
+    button.addEventListener("click", event => {
+        deleteNote(note);
+    });
 
     element.appendChild(button);
+}
+
+function editNote(note) {
+    const form = document.getElementById("noteForm");
+    form.classList.replace("hidden", "visible");    
+    document.getElementById("noteTitle").value = note.title;
+    document.getElementById("noteDate").value = note.date;
+    document.getElementById("noteContent").value = note.content;
+    document.getElementById("noteTag").value = note.tag;
+    document.getElementById("reminder").checked == note.reminder;
+    document.getElementById("rememberDate").value == note.reminderDate;
+    reminderFields.classList.replace("hidden", "visible");
+    document.getElementById("formAction").value = "edit";
 }
 
 function createTitle(element, note) {
@@ -166,8 +200,9 @@ function generateId(length) {
 }
 
 function deleteNote(note) {
-    notes.slice(note);
-    // saveNotes();
+    deleteModal.classList.replace("hidden", "visible");
+    document.getElementById("noteToDeleteTitle").textContent = note.title;
+    noteToDelete = note;
 }
 
 function saveNotes() {
@@ -182,5 +217,20 @@ function clearForm() {
     document.getElementById("noteContent").value = "";
     document.getElementById("noteTag").value = "";
     document.getElementById("reminder").checked == 0;
-    document.getElementById("reminder").checked == 0;
+    document.getElementById("rememberDate").value = "";
+    document.getElementById("formAction").value = "";
+}
+
+function closeDeleteModal() {
+    noteToDelete = null;
+    deleteModal.classList.replace("visible", "hidden");
+}
+
+function confirmDeleteNote() {
+    if (noteToDelete != null) {
+        notes.splice(Object.keys(noteToDelete), 1);
+        noteToDelete = null;
+        closeDeleteModal();
+        saveNotes();
+    }
 }

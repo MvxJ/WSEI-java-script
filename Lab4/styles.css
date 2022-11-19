@@ -95,12 +95,15 @@ body {
     margin-left: 25vw;
     margin-top: 10vh;
     overflow: hidden;
+    z-index: 1;
 }
 
 .actions {
     width: 100%;
     height: 50px;
     background-color: #e9ecef;
+    padding: 5px;
+    cursor: pointer;
 }
 
 .hidden {
@@ -113,4 +116,50 @@ body {
 
 .fields {
     padding: 5px;
+}
+
+.note-actions {
+    display: flex;
+    position: relative;
+    bottom: -65%;
+    font-size: 12px;
+}
+
+.edit-note-button {
+    cursor: pointer;
+    margin-right: 15px;    
+}
+
+#deleteModal {
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    overflow: hidden;
+    background-color: #fff;
+    margin-left: calc(50% - 200px);
+    margin-top: calc(50vh - 100px);
+    border-radius: 5px;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.delete-modal-body {
+    text-align: center;
+    padding: 5px;
+}
+
+.delete-modal-buttons {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#noteToDeleteTitle {
+    font-weight: bold;
+}
+
+.delete-note-button {
+    cursor: pointer;
 }

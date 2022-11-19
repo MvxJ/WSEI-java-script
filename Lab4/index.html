@@ -6,6 +6,24 @@
     </head>
     <body>
         <div class="mainContainer">
+            <div id="deleteModal" class="hidden">
+                <div class="actions">
+                    <div class="closeModalDeleteButton">Close</div>
+                </div>
+                <div class="delete-modal-body">
+                    <p>Are you sure you want delete note <span id="noteToDeleteTitle">Note title</span>?</p>
+                </div>
+                <div class="delete-modal-buttons">
+                    <div style="width: 60%; display: flex; justify-content: space-around;">
+                        <div class="btn btn-danger" id="deleteNoteButton">
+                        Delete
+                        </div>
+                        <div class="btn btn-secondary closeModalDeleteButton">
+                            Cancel
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="noteForm" class="hidden">
                 <div class="actions">
                     <div id="closeModalButton">Close</div>

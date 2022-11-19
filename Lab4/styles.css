@@ -87,6 +87,7 @@ body {
 }
 
 #noteForm {
+    transition: 0.3s ease-in-out;
     position: absolute;
     width: 50vw;
     height: 80vh;
@@ -131,6 +132,7 @@ body {
 }
 
 #deleteModal {
+    transition: 0.3s ease-in-out;
     position: absolute;
     width: 400px;
     height: 200px;

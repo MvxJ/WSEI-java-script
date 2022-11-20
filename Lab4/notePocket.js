@@ -6,10 +6,12 @@ const reminderSwitch = document.getElementById("reminder");
 const closeDeleteModalButtons = document.querySelectorAll(".closeModalDeleteButton");
 const deleteModal = document.getElementById("deleteModal");
 const deleteNoteButton = document.getElementById("deleteNoteButton");
+const searchButton = document.getElementById("search");
 let notes = [];
 let noteToDelete = null;
 
 fetchNotes();
+setInterval(reminder, 1000);
 
 deleteNoteButton.addEventListener("click", confirmDeleteNote)
 
@@ -37,6 +39,8 @@ addNoteButton.addEventListener("click", event => {
     document.getElementById("formAction").value = "create";
     form.classList.replace('hidden', 'visible');
 });
+
+searchButton.addEventListener("click", searchNotes);
 
 saveNoteButton.addEventListener("click", saveNote);
 
@@ -66,10 +70,12 @@ function saveNote() {
         createdAt: Date.now(),
         title: document.getElementById("noteTitle").value,
         date: document.getElementById("noteDate").value,
+        color: document.getElementById("noteColor").value,
         content: document.getElementById("noteContent").value,
         tag: document.getElementById("noteTag").value,
         reminder: document.getElementById("reminder").checked == 1 ? true : false,
         reminderDate: document.getElementById("reminder").checked == 1 ? document.getElementById("rememberDate").value : null,
+        notificationShowed: false
     }
 
     if (formAction === "create") {
@@ -89,6 +95,7 @@ function saveNote() {
 function createHtmlNote(note) {
     const noteDiv = document.createElement('div');
     noteDiv.classList.add('note');
+    noteDiv.style.backgroundColor = note.color;
     noteDiv.id = note.id;
     createNoteHeader(noteDiv, note);
     createNoteContent(noteDiv, note.content);
@@ -156,6 +163,7 @@ function editNote(note) {
     document.getElementById("noteTag").value = note.tag;
     document.getElementById("reminder").checked == note.reminder;
     document.getElementById("rememberDate").value == note.reminderDate;
+    document.getElementById("noteColor").value = note.color;
     reminderFields.classList.replace("hidden", "visible");
     document.getElementById("formAction").value = "edit";
 }
@@ -174,6 +182,26 @@ function createTitle(element, note) {
     }
 
     element.appendChild(titleDiv);
+}
+
+function searchNotes() {
+    const criteria = document.getElementById("searchText").value;
+
+    if (criteria != "") {
+        notesBox.innerHTML = "";
+        let searchResults = notes.filter(function (note) {
+            return note.title.indexOf(criteria) >= 0 || note.tag.indexOf(criteria) >= 0 || note.content.indexOf(criteria) >= 0;
+        });
+
+        if (searchResults.length > 0) {
+            notesBox.innerHTML = "";
+            searchResults.forEach(note => {
+                createHtmlNote(note);
+            });
+        } else {
+            notesBox.innerHTML = "No notes found for this criteria...";
+        }
+    }
 }
 
 function createNoteTag(element, tag) {
@@ -225,12 +253,31 @@ function clearForm() {
     document.getElementById("formAction").value = "";
     document.getElementById("noteId").value = "";
     document.getElementById("noteIndex").value = "";
+    document.getElementById("noteColor").value = "#feff9c";
     reminderFields.classList.replace("visible", "hidden");
 }
 
 function closeDeleteModal() {
     noteToDelete = null;
     deleteModal.classList.replace("visible", "hidden");
+}
+
+function reminder() {
+    const notesToReminder = notes.filter(function (note) {
+        return note.reminder == true && note.notificationShowed == false;
+    });
+
+    notesToReminder.forEach(note => {
+        const reminderDate = new Date(note.reminderDate);
+        const currentDate = new Date();
+
+        if (reminderDate < currentDate || currentDate == reminderDate) {
+            note.notificationShowed = true;
+            notes[notes.indexOf(note)] = note;
+            saveNotes();
+            window.alert("Do you remember about your note? Please see note " + note.title + "!");
+        }
+    });
 }
 
 function confirmDeleteNote() {

@@ -37,7 +37,6 @@ body {
 }
 
 .note {
-    background-color: #feff9c;
     min-width:300px;
     min-height: 300px;
     max-width: 300px;
@@ -164,4 +163,13 @@ body {
 
 .delete-note-button {
     cursor: pointer;
+}
+
+#noteColor {
+    width:100px;
+    height: 39px;
+}
+
+.form-switch {
+    display: inline-block;
 }

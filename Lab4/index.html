@@ -46,13 +46,22 @@
                         <div class="row">
                             <div class="col-sm">
                                 <label for="noteDate">Date of Event</label>
-                                <input type="date" class="form-control"name="noteDate" id="noteDate" required>
+                                <input type="date" class="form-control "name="noteDate" id="noteDate" required>
                             </div>
+                            <div class="col-sm">
+                                <label for="noteColor">Note color</label>
+                                <input type="color" id="noteColor" name="noteColor" value="#feff9c" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">   
                             <div class="col-sm">
                                 <div id="reminderFields" class="hidden">
                                     <label for="rememberDate">Reminder date</label>
                                     <input type="datetime-local" class="form-control" name="rememberDate" id="rememberDate">
                                 </div>
+                            </div>
+                            <div class="col-sm">
+
                             </div>
                         </div>
                         <div class="row">
@@ -60,6 +69,10 @@
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="reminder">
                                     <label class="form-check-label" for="reminder">Reminder</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pin">
+                                    <label class="form-check-label" for="pin">Pin note</label>
                                 </div>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="toDoList">
@@ -87,7 +100,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="btn btn-primary">Search...</div>
+                    <div class="btn btn-primary" id="search">Search...</div>
                     <div class="btn btn-primary" id="createNote">Create note</div>
                 </div>
             </div>

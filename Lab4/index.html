@@ -71,8 +71,8 @@
                                     <label class="form-check-label" for="reminder">Reminder</label>
                                 </div>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="pin">
-                                    <label class="form-check-label" for="pin">Pin note</label>
+                                    <input class="form-check-input" type="checkbox" id="notePin">
+                                    <label class="form-check-label" for="notePin">Pin note</label>
                                 </div>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="toDoList">
@@ -82,11 +82,30 @@
                         </div>
                         <div class="row">
                             <div class="col-sm">
-                                <label for="noteContent">Text</label>
+                                <label for="noteContent">Content</label>
                                 <textarea name="Text1" cols="40" rows="5" name="noteContent" class="form-control" id="noteContent" required></textarea>
-                                <div class="btn btn-primary" id="saveNote">Save</div>
                             </div>
                         </div>
+                        <div id="toDoListForm" class="hidden">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <label for="toDoElement">What you need to do?</label>
+                                    <input type="text" name="toDoElement" id="toDoElement" class="form-control">
+                                </div>
+                                <div class="col-sm">
+                                    <div class="btn btn-primary" id="addElementToList">Add element</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p>To do list content: </h4>
+                                <div id="toDoListBox">
+                                    <div class="col-sm" id="toDoListContent">
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn btn-primary" id="saveNote">Save</div>
                     </form>
                 </div>
             </div>
@@ -99,9 +118,10 @@
                         <input type="text" class="form-control" name="searchText" id="searchText">
                     </div>
                 </div>
-                <div>
+                <div class="buttons">
                     <div class="btn btn-primary" id="search">Search...</div>
                     <div class="btn btn-primary" id="createNote">Create note</div>
+                    <div class="btn btn-secondary hidden" id="resetFilters">Reset...</div>
                 </div>
             </div>
             <div class="notesBoard">

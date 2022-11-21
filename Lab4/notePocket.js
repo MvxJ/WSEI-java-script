@@ -7,6 +7,8 @@ const closeDeleteModalButtons = document.querySelectorAll(".closeModalDeleteButt
 const deleteModal = document.getElementById("deleteModal");
 const deleteNoteButton = document.getElementById("deleteNoteButton");
 const searchButton = document.getElementById("search");
+const addElementToList = document.getElementById("addElementToList");
+const toDoListCheckbox = document.getElementById("toDoList");
 let notes = [];
 let noteToDelete = null;
 
@@ -17,6 +19,17 @@ deleteNoteButton.addEventListener("click", confirmDeleteNote)
 
 closeDeleteModalButtons.forEach(button => {
     button.addEventListener("click", closeDeleteModal)
+});
+
+addElementToList.addEventListener("click", addElementToToDoList);
+
+toDoListCheckbox.addEventListener("click", event => {
+    const fields = document.getElementById("toDoListForm");
+    if (toDoListCheckbox.checked == 1) {
+        fields.classList.replace("hidden", "visible");
+    } else {
+        fields.classList.replace("visible", "hidden");
+    }
 });
 
 reminderSwitch.addEventListener("click", event => {
@@ -49,8 +62,9 @@ function fetchNotes() {
 
     if (storageNotes != null) {
         notes = JSON.parse(storageNotes);
-        notes.reverse();
-    }
+        notes.sort((a,b) => b.createdAt - a.createdAt);
+        notes.sort((a, b) => b.pin - a.pin);
+    };
     
     if (Object.keys(notes).length === 0) {
         notesBox.innerHTML = "<p>No notes found please add new notes...<p>";
@@ -73,6 +87,9 @@ function saveNote() {
         color: document.getElementById("noteColor").value,
         content: document.getElementById("noteContent").value,
         tag: document.getElementById("noteTag").value,
+        pin: document.getElementById("notePin").checked ? true : false,
+        toDoList: document.getElementById("toDoList").checked ? true : false,
+        toDoListContent: document.getElementById("toDoList").checked ? document.getElementById("toDoListContent").outerHTML : null,
         reminder: document.getElementById("reminder").checked == 1 ? true : false,
         reminderDate: document.getElementById("reminder").checked == 1 ? document.getElementById("rememberDate").value : null,
         notificationShowed: false
@@ -154,6 +171,7 @@ function createDeleteNoteButton(element, note) {
 
 function editNote(note) {
     const form = document.getElementById("noteForm");
+    const box = document.getElementById("toDoListBox");
     form.classList.replace("hidden", "visible");    
     document.getElementById("noteTitle").value = note.title;
     document.getElementById("noteIndex").value = notes.indexOf(note);
@@ -161,11 +179,16 @@ function editNote(note) {
     document.getElementById("noteDate").value = note.date;
     document.getElementById("noteContent").value = note.content;
     document.getElementById("noteTag").value = note.tag;
-    document.getElementById("reminder").checked == note.reminder;
-    document.getElementById("rememberDate").value == note.reminderDate;
+    document.getElementById("reminder").checked = note.reminder;
+    document.getElementById("rememberDate").value = note.reminderDate;
     document.getElementById("noteColor").value = note.color;
-    reminderFields.classList.replace("hidden", "visible");
+    document.getElementById("notePin").checked = note.pin;
+    document.getElementById("toDoList").checked = note.toDoList;
+    note.reminder ? reminderFields.classList.replace("hidden", "visible") : reminderFields.classList.replace("visible", "hidden");
+    note.toDoList ? document.getElementById("toDoListForm").classList.replace("hidden", "visible") : document.getElementById("toDoListContent").classList.replace("visible", "hidden");
     document.getElementById("formAction").value = "edit";
+    box.innerHtml = "";
+    box.innerHTML = note.toDoListContent;
 }
 
 function createTitle(element, note) {
@@ -186,11 +209,14 @@ function createTitle(element, note) {
 
 function searchNotes() {
     const criteria = document.getElementById("searchText").value;
+    const resetButton = document.getElementById('resetFilters');
+    resetButton.addEventListener("click", resetFilters);
+    resetButton.classList.remove('hidden');
 
     if (criteria != "") {
         notesBox.innerHTML = "";
         let searchResults = notes.filter(function (note) {
-            return note.title.indexOf(criteria) >= 0 || note.tag.indexOf(criteria) >= 0 || note.content.indexOf(criteria) >= 0;
+            return note.title.toLowerCase().indexOf(criteria) >= 0 || note.tag.toLowerCase().indexOf(criteria) >= 0 || note.content.toLowerCase().indexOf(criteria) >= 0;
         });
 
         if (searchResults.length > 0) {
@@ -202,6 +228,12 @@ function searchNotes() {
             notesBox.innerHTML = "No notes found for this criteria...";
         }
     }
+}
+
+function resetFilters() {
+    const resetButton = document.getElementById('resetFilters');
+    resetButton.classList.add('hidden');
+    fetchNotes();
 }
 
 function createNoteTag(element, tag) {
@@ -244,17 +276,25 @@ function saveNotes() {
 }
 
 function clearForm() {
+    if (document.getElementById("toDoList").checked) {
+        document.getElementById("toDoListContent").textContent = "";
+    }
+
     document.getElementById("noteTitle").value = "";
     document.getElementById("noteDate").value = "";
     document.getElementById("noteContent").value = "";
     document.getElementById("noteTag").value = "";
-    document.getElementById("reminder").checked == 0;
+    document.getElementById("reminder").checked = "";
     document.getElementById("rememberDate").value = "";
     document.getElementById("formAction").value = "";
     document.getElementById("noteId").value = "";
     document.getElementById("noteIndex").value = "";
     document.getElementById("noteColor").value = "#feff9c";
+    document.getElementById("notePin").checked = "";
+    document.getElementById("toDoList").checked = "";
     reminderFields.classList.replace("visible", "hidden");
+    document.getElementById("toDoElement").value = "";
+    document.getElementById("toDoListForm").classList.replace("visible", "hidden");
 }
 
 function closeDeleteModal() {
@@ -287,4 +327,21 @@ function confirmDeleteNote() {
         closeDeleteModal();
         saveNotes();
     }
+}
+
+function addElementToToDoList() {
+    const elementName = document.getElementById("toDoElement").value;
+    const checkBoxField = document.createElement('input')
+    const randomString = generateId(12);
+    const toDoContent = document.getElementById("toDoListContent");
+    checkBoxField.type = "checkbox";
+    checkBoxField.id = randomString;
+    const label = document.createElement('label');
+    label.for = randomString;
+    label.textContent = elementName;
+    const div = document.createElement('div');
+    div.classList.add('to-do-list-element');
+    div.appendChild(checkBoxField);
+    div.appendChild(label);
+    toDoContent.appendChild(div);
 }

@@ -11,6 +11,7 @@ const addElementToList = document.getElementById("addElementToList");
 const toDoListCheckbox = document.getElementById("toDoList");
 let notes = [];
 let noteToDelete = null;
+let toDoCheckboxes = [];
 
 fetchNotes();
 setInterval(reminder, 1000);
@@ -74,6 +75,8 @@ function fetchNotes() {
             createHtmlNote(note);
         });
     }
+
+    addEventListenerToCheckboxes();
 }
 
 function saveNote() {
@@ -81,7 +84,7 @@ function saveNote() {
    
     const note = {
         id: document.getElementById("noteId").value != "" ? document.getElementById("noteId").value : generateId(6),
-        createdAt: Date.now(),
+        createdAt: document.getElementById("createdAtDate").value != "" ? document.getElementById("createdAtDate").value : Date.now(),
         title: document.getElementById("noteTitle").value,
         date: document.getElementById("noteDate").value,
         color: document.getElementById("noteColor").value,
@@ -102,7 +105,6 @@ function saveNote() {
         notes[noteIndex] = note;
     }
 
-    clearForm();
     saveNotes()
     const form = document.getElementById("noteForm");
     form.classList.replace('visible', 'hidden');
@@ -115,7 +117,7 @@ function createHtmlNote(note) {
     noteDiv.style.backgroundColor = note.color;
     noteDiv.id = note.id;
     createNoteHeader(noteDiv, note);
-    createNoteContent(noteDiv, note.content);
+    createNoteContent(noteDiv, note);
     createNoteActions(noteDiv, note);
 
     notesBox.appendChild(noteDiv);
@@ -125,14 +127,23 @@ function createNoteHeader(element, note) {
     const headerDiv = document.createElement('div');
     headerDiv.classList.add("noteHeader");
     createTitle(headerDiv, note)
+    addNoteDate(headerDiv, note.date)
 
     element.appendChild(headerDiv);
 }
 
-function createNoteContent(element , content) {
+function createNoteContent(element , note) {
     const noteContentDiv = document.createElement('div');
     noteContentDiv.classList.add("noteContent");
-    noteContentDiv.textContent = content;
+    const p = document.createElement('p');
+    p.textContent = note.content;
+    noteContentDiv.appendChild(p);
+
+    if (note.toDoList == true) {
+        const toDoList = document.createElement('div');
+        toDoList.innerHTML = note.toDoListContent;
+        noteContentDiv.appendChild(toDoList);
+    }
 
     element.appendChild(noteContentDiv);
 }
@@ -172,7 +183,8 @@ function createDeleteNoteButton(element, note) {
 function editNote(note) {
     const form = document.getElementById("noteForm");
     const box = document.getElementById("toDoListBox");
-    form.classList.replace("hidden", "visible");    
+    form.classList.replace("hidden", "visible");
+    document.getElementById("createdAtDate").value = note.createdAt;    
     document.getElementById("noteTitle").value = note.title;
     document.getElementById("noteIndex").value = notes.indexOf(note);
     document.getElementById("noteId").value = note.id;
@@ -194,17 +206,29 @@ function editNote(note) {
 function createTitle(element, note) {
     const titleDiv = document.createElement('div');
     titleDiv.classList.add("noteTitle");
-    titleDiv.textContent = note.title;
-    
+
+    if (note.pin) {
+        createPinImage(titleDiv)
+    }
+
+    const title = document.createElement('h6');
+    title.textContent = note.title;
+
+    titleDiv.appendChild(title);
+
     if (note.tag) {
         createNoteTag(titleDiv, note.tag);
     }
 
-    if (note.date) {
-        addNoteDate(titleDiv, note.date)
-    }
-
     element.appendChild(titleDiv);
+}
+
+function createPinImage(element) {
+    const image = document.createElement('img');
+    image.src = './images/pin.png';
+    image.id="pinImage";
+
+    element.appendChild(image);
 }
 
 function searchNotes() {
@@ -228,6 +252,8 @@ function searchNotes() {
             notesBox.innerHTML = "No notes found for this criteria...";
         }
     }
+
+    addEventListenerToCheckboxes();
 }
 
 function resetFilters() {
@@ -281,6 +307,7 @@ function clearForm() {
     }
 
     document.getElementById("noteTitle").value = "";
+    document.getElementById("createdAtDate").value = "";
     document.getElementById("noteDate").value = "";
     document.getElementById("noteContent").value = "";
     document.getElementById("noteTag").value = "";
@@ -291,6 +318,7 @@ function clearForm() {
     document.getElementById("noteIndex").value = "";
     document.getElementById("noteColor").value = "#feff9c";
     document.getElementById("notePin").checked = "";
+
     document.getElementById("toDoList").checked = "";
     reminderFields.classList.replace("visible", "hidden");
     document.getElementById("toDoElement").value = "";
@@ -336,6 +364,7 @@ function addElementToToDoList() {
     const toDoContent = document.getElementById("toDoListContent");
     checkBoxField.type = "checkbox";
     checkBoxField.id = randomString;
+    checkBoxField.classList = "to-do-checkbox-input-field";
     const label = document.createElement('label');
     label.for = randomString;
     label.textContent = elementName;
@@ -344,4 +373,20 @@ function addElementToToDoList() {
     div.appendChild(checkBoxField);
     div.appendChild(label);
     toDoContent.appendChild(div);
+}
+
+function addEventListenerToCheckboxes() {
+    toDoCheckboxes = document.querySelectorAll(".to-do-checkbox-input-field");
+
+    toDoCheckboxes.forEach(checkBox => {
+        checkBox.addEventListener("click", event => {
+            const label = event.target.parentElement.getElementsByTagName('label')[0];
+    
+            if (checkBox.checked) {
+                label.style.textDecoration = "line-through";
+            } else {
+                label.style.textDecoration = "none";
+            }
+        });
+    });
 }

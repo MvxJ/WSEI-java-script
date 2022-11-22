@@ -16,6 +16,8 @@ let toDoCheckboxes = [];
 fetchNotes();
 setInterval(reminder, 1000);
 
+window.onbeforeunload = saveToDolists;
+
 deleteNoteButton.addEventListener("click", confirmDeleteNote)
 
 closeDeleteModalButtons.forEach(button => {
@@ -80,6 +82,7 @@ function fetchNotes() {
 }
 
 function saveNote() {
+    saveToDolists();
     const formAction = document.getElementById("formAction").value;
    
     const note = {
@@ -115,7 +118,7 @@ function createHtmlNote(note) {
     const noteDiv = document.createElement('div');
     noteDiv.classList.add('note');
     noteDiv.style.backgroundColor = note.color;
-    noteDiv.id = note.id;
+    noteDiv.id = notes.indexOf(note);
     createNoteHeader(noteDiv, note);
     createNoteContent(noteDiv, note);
     createNoteActions(noteDiv, note);
@@ -232,6 +235,7 @@ function createPinImage(element) {
 }
 
 function searchNotes() {
+    saveToDolists();
     const criteria = document.getElementById("searchText").value;
     const resetButton = document.getElementById('resetFilters');
     resetButton.addEventListener("click", resetFilters);
@@ -359,34 +363,45 @@ function confirmDeleteNote() {
 
 function addElementToToDoList() {
     const elementName = document.getElementById("toDoElement").value;
-    const checkBoxField = document.createElement('input')
+    const li = document.createElement('li')
     const randomString = generateId(12);
     const toDoContent = document.getElementById("toDoListContent");
-    checkBoxField.type = "checkbox";
-    checkBoxField.id = randomString;
-    checkBoxField.classList = "to-do-checkbox-input-field";
-    const label = document.createElement('label');
-    label.for = randomString;
-    label.textContent = elementName;
+    li.id = randomString;
+    li.classList.add("to-do-checkbox-input-field");
+    li.classList.add("notDone");
+    li.textContent = elementName;
     const div = document.createElement('div');
     div.classList.add('to-do-list-element');
-    div.appendChild(checkBoxField);
-    div.appendChild(label);
+    div.appendChild(li);
     toDoContent.appendChild(div);
 }
 
 function addEventListenerToCheckboxes() {
-    toDoCheckboxes = document.querySelectorAll(".to-do-checkbox-input-field");
+    elements = document.querySelectorAll(".to-do-checkbox-input-field");
 
-    toDoCheckboxes.forEach(checkBox => {
-        checkBox.addEventListener("click", event => {
-            const label = event.target.parentElement.getElementsByTagName('label')[0];
-    
-            if (checkBox.checked) {
-                label.style.textDecoration = "line-through";
+    elements.forEach(element => {
+        element.addEventListener("click", event => {    
+            if (element.classList.contains("notDone")) {
+                element.classList.replace("notDone", "done");
             } else {
-                label.style.textDecoration = "none";
+                element.classList.replace("done", "notDone");
             }
         });
     });
+}
+
+function saveToDolists() {
+    const notesFromCards = document.querySelectorAll('.note');
+    
+    notesFromCards.forEach(note => {
+        const content = note.querySelector(".noteContent");
+        const toDoListContent = content.getElementsByTagName('div');
+        
+        if (toDoListContent.length > 0) {
+            const htmlContentToDoList = toDoListContent[0].outerHTML;
+            notes[note.id].toDoListContent = htmlContentToDoList;
+        }
+    });
+    
+    saveNotes();
 }

@@ -202,3 +202,11 @@ body {
 .to-do-list-element label {
     margin-left: 5px;
 }
+
+.notDone {
+    text-decoration: none;
+}
+
+.done {
+    text-decoration: line-through;
+}

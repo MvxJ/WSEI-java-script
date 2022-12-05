@@ -13,6 +13,8 @@ addButton.addEventListener("click", event => {
 });
 
 async function calc() {
+    document.getElementById("addingResults").innerHTML = "0";
+
     const start = performance.now();
         await addAll();
     const end = performance.now();
@@ -21,17 +23,16 @@ async function calc() {
 }
 
 async function addAll() {
-    const fields = document.querySelectorAll('.number-fields');
+    const fields = document.querySelectorAll('.numberFields');
     let results = 0;
     fields.forEach(field => {
-        console.log(field.value)
-        const response = asyncAdd(results, parseInt(field.value));
-        results = asyncAdd(results, parseInt(field.value));
+        asyncAdd(parseInt(results), parseInt(field.value)).then(response => {
+            if (response) {
+                results += response;
+                document.getElementById("addingResults").innerHTML = results;
+            }
+        });
     });
-
-    console.log(results);
-
-    document.getElementById("addingResults").innerHTML = results;
 }
 
 const asyncAdd = async (a,b) => {
@@ -51,7 +52,7 @@ function createNumberFields() {
     for (i = 0; i < value; i++) {
         const newElement = document.createElement("input")
         newElement.type = "text";
-        newElement.classList.add = "number-fields";
+        newElement.classList.add("numberFields");
 
         fieldsBox.appendChild(newElement);
     }

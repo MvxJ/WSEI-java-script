@@ -44,26 +44,32 @@ body {
     border-radius: 5px;
     padding: 5px;
     margin: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .note .noteHeader {
     display: flex;
     flex-direction: column;
     text-align: left;
-    height: 25px;
     padding: 5px;
-    margin-bottom: 35px;
     width: 100%;
     text-align: left;
 }
 
 .note .noteHeader .noteTitle {
-    font-weight: 800;
     font-size: 18px;
     width: 100%;
+    display: flex;
 }
 
-.note .noteHeader .noteDate {
+.note .noteHeader .noteTitle img {
+    margin-right: 15px;
+    width: 24px;
+    height: 24px;
+}
+
+.noteDate {
     font-size: 14px;
     font-style: italic;
     font-weight: 100;
@@ -74,6 +80,7 @@ body {
     min-width: 35px;
     margin-left: 15px;
     width: auto;
+    height: 22.5px;
     padding: 0 5px 0 5px;
     background-color: lightblue;
     border-radius: 15px;
@@ -83,6 +90,9 @@ body {
 
 .note .noteContent {
     text-decoration: underline;
+    height:73.5%;
+    overflow-y: scroll;
+    padding: 5px;
 }
 
 #noteForm {
@@ -121,7 +131,6 @@ body {
 .note-actions {
     display: flex;
     position: relative;
-    bottom: -65%;
     font-size: 12px;
 }
 
@@ -172,4 +181,32 @@ body {
 
 .form-switch {
     display: inline-block;
+}
+
+#addElementToList {
+    margin-top: 23.5px !important;
+}
+
+#toDoListContent {
+    margin-top: 5px;
+    height: auto;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.to-do-list-element {
+    width: 100%;
+    height: 25px;    
+}
+
+.to-do-list-element label {
+    margin-left: 5px;
+}
+
+.notDone {
+    text-decoration: none;
+}
+
+.done {
+    text-decoration: line-through;
 }

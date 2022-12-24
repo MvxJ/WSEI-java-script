@@ -1,0 +1,10 @@
+body {
+    padding: 15px;
+    background: rgb(238,69,240);
+    background: radial-gradient(circle, rgba(238,69,240,1) 0%, rgba(251,110,255,1) 47%, rgba(0,212,255,1) 100%);
+}
+
+.canvas-box {
+    margin-left: calc(50% - 600px);
+    margin-top: 100px;
+}

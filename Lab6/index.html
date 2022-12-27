@@ -10,30 +10,28 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm">
-                <input type="range" class="form-range">
+            <div class="col-sm-2">
+                <label for="numberOfBalls">Number of balls</label>
+                <input type="range" class="form-range" id="numberOfBalls" value="10">
+                <label for="distanceValue">Distance</label>
+                <input type="range" class="form-range" id="distanceValue" value="10">
+                <label for="powerOfMouseEffect">Mouse effect power</label>
+                <input type="number" class="form-control" id="powerOfMouseEffect" value="1.0">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="repulsionEffect">
+                    <label class="form-check-label" for="repulsionEffect">Mouse effect repulsion</label>
+                </div>
+                <label for="yValue">Y Value</label>
+                <input type="number" class="form-control" id="yValue" value="2.0">
+                <label for="xValue">X Value</label>
+                <input type="number" class="form-control" id="xValue" value="5.0">
+                <label for="energySpeed">Energy flow rate</label>
+                <input type="number" class="form-control" id="energySpeed" value="1.0">
+                <input type="button" class="btn btn-primary" value="Play" id="play">
+                <input type="button" class="btn btn-primary" value="Reset" id="reset">
             </div>
-            <div class="col-sm">
-                <input type="range" class="form-range">
-            </div>
-            <div class="col-sm">
-                <label for="yPower">Y Power</label>
-                <input type="number" class="form-control" id="yPower">
-            </div>
-            <div class="col-sm">
-                <label for="xPower">X Power</label>
-                <input type="number" class="form-control" id="xPower">
-            </div>
-            <div class="col-sm">
-                <div class="btn btn-primary">Play</div>
-            </div>
-            <div class="col-sm">
-                <div class="btn btn-primary">Reset</div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-sm canvas-box">
-                <canvas width="1200px" height="600px" style="border:1px solid black;">
+                <canvas width="1200px" height="800px" id="canvasBoard">
 
                 </canvas>
             </div>

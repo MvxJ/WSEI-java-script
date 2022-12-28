@@ -19,6 +19,11 @@ function getConfig() {
 
 function playAnimation() {
     const config = getConfig();
+
+    clearCanvasBoard();
+    for (var i = 0; i < parseInt(config.numberOfBalls); i++) {
+        drawBall();
+    }
 }
 
 function clearCanvasBoard() {
@@ -27,5 +32,22 @@ function clearCanvasBoard() {
 }
 
 function drawBall() {
-    
+    const context = canvasBoard.getContext('2d');
+    const size = getBallSize();
+    const x = getRandomCoordinates(size, canvasBoard.width);
+    const y = getRandomCoordinates(size, canvasBoard.height);
+    context.beginPath();
+    context.arc(x, y, size, 0, 2 * Math.PI);
+    context.stroke();
+    context.save();
 }
+
+function getBallSize() {
+    return parseInt(Math.floor(Math.random() * 50));
+}
+
+function getRandomCoordinates(ballSize, canvasWidth) {
+    return Math.random() * ((canvasWidth - ballSize) - ballSize) + ballSize;
+}
+
+function drawBeginBoard();

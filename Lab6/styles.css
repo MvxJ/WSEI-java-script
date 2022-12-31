@@ -14,7 +14,7 @@ body {
     width: 100%;
 }
 
-.canvas-box {
+#canvasBoard {
     border-radius: 5px;
     border: 2px solid black;
 }

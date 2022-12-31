@@ -1,9 +1,48 @@
 let canvasBoard = document.getElementById("canvasBoard");
 let playBytton = document.getElementById("play");
 let resetButton = document.getElementById("reset");
+let Balls = [];
+let animationId = null;
 
-resetButton.addEventListener("click", clearCanvasBoard);
+resetButton.addEventListener("click", stopAnimation);
 playBytton.addEventListener("click", playAnimation);
+canvasBoard.addEventListener("click" , (e) => {
+    const position = {
+        x: e.clientX,
+        y: e.clientY
+    }
+});
+
+class Ball {
+    constructor() {
+        this.r = parseInt(Math.floor(Math.random() * 30));
+        this.x = parseInt(Math.random() * ((canvasBoard.width - this.r) - this.r) + this.r);
+        this.y = parseInt(Math.random() * ((canvasBoard.height - this.r) - this.r) + this.r);
+        this.speed = parseInt(Math.floor(Math.random() * (10 - 1) + 1));;
+    }
+
+    drawBall(canvasBoard) {
+        const ctx = canvasBoard.getContext('2d');
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.save();
+    }
+
+    moveBall() {
+        if (
+            this.x + this.speed >= canvasBoard.width || 
+            this.y + this.speed >= canvasBoard.height ||
+            this.y + this.speed <= 0 ||
+            this.x + this.speed <= 0
+        ) {
+            this.speed *= -1;
+        }
+        
+        this.x += this.speed;
+        this.y += this.speed;
+    }
+}
 
 function getConfig() {
     return {
@@ -19,10 +58,15 @@ function getConfig() {
 
 function playAnimation() {
     const config = getConfig();
+    drawBeginBoard(config.numberOfBalls);
+    moveBalls();
+}
 
-    clearCanvasBoard();
-    for (var i = 0; i < parseInt(config.numberOfBalls); i++) {
-        drawBall();
+function stopAnimation() {
+    if (animationId) {
+        clearTimeout(animationId);
+        clearCanvasBoard();
+        Balls = [];
     }
 }
 
@@ -31,23 +75,25 @@ function clearCanvasBoard() {
     context.clearRect(0, 0, canvasBoard.width, canvasBoard.height);
 }
 
-function drawBall() {
-    const context = canvasBoard.getContext('2d');
-    const size = getBallSize();
-    const x = getRandomCoordinates(size, canvasBoard.width);
-    const y = getRandomCoordinates(size, canvasBoard.height);
-    context.beginPath();
-    context.arc(x, y, size, 0, 2 * Math.PI);
-    context.stroke();
-    context.save();
+function drawBeginBoard(numberOfBalls) {
+    for (var i = 0; i < parseInt(numberOfBalls); i++) {
+        var ball = new Ball();
+        ball.drawBall(canvasBoard);
+        Balls.push(ball);
+    }
 }
 
-function getBallSize() {
-    return parseInt(Math.floor(Math.random() * 50));
+function moveBalls() {
+    animationId = setTimeout(function() {
+        requestAnimationFrame(moveBalls);
+        clearCanvasBoard();
+        Balls.forEach(ball => {
+            ball.moveBall();
+            ball.drawBall(canvasBoard);
+        });
+    }, 1000 / 60);
 }
 
-function getRandomCoordinates(ballSize, canvasWidth) {
-    return Math.random() * ((canvasWidth - ballSize) - ballSize) + ballSize;
+function intersect(point1, point2, searchLength) {
+    return parseInt(Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2)) <= searchLength;
 }
-
-function drawBeginBoard();

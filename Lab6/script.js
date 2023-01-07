@@ -11,22 +11,28 @@ const yDirections = ['UP', 'DOWN'];
 resetButton.addEventListener("click", stopAnimation);
 playBytton.addEventListener("click", playAnimation);
 canvasBoard.addEventListener("click" , (e) => {
+    const offsetX = canvasBoard.offsetLeft;
+    const offsetY = canvasBoard.offsetTop;
+    
     const position = {
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX - offsetX,
+        y: e.clientY - offsetY
     }
 
     findBall(position);
 });
 
-canvasBoard.addEventListener("onmousemove", (e) => {
+canvasBoard.onmousemove = function (e) {
+    const offsetX = canvasBoard.offsetLeft;
+    const offsetY = canvasBoard.offsetTop;
+
     const position = {
-        x: e.clientX,
-        y: e.clientY
+        x: e.clientX - offsetX,
+        y: e.clientY - offsetY
     }
 
-    console.log(position);
-});
+    //TODO:: Implement logif for repulsion and attration
+};
 
 class Ball {
     constructor() {

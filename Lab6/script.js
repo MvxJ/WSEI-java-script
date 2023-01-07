@@ -31,7 +31,16 @@ canvasBoard.onmousemove = function (e) {
         y: e.clientY - offsetY
     }
 
-    //TODO:: Implement logif for repulsion and attration
+    //TODO:: Implement logic for repulsion and attration
+    // if (config.mouseEffectRepulsion == true) {
+    //     Balls.forEach(ball => {
+    //         ball.repulsion(position);
+    //     });
+    // } else {
+    //     Balls.forEach(ball => {
+    //         ball.attration(position);
+    //     });
+    // }
 };
 
 class Ball {
@@ -132,6 +141,27 @@ class Ball {
         this.speedX += (config.energySpeed * this.avgSpeed) / 100;
         this.speedY += (config.energySpeed * this.avgSpeed) / 100;
     }
+
+    // attration(position) {
+    //     if (parseInt(Math.sqrt((position.x - this.x) ** 2 + (position.y - this.y) ** 2)) <= config.mouseEffectPower) {
+            
+    //         if (this.xDirection == "LEFT" && this.x < position.x) {
+    //             this.xDirection = "RIGHT";
+    //             this.speedX *= -1;
+    //         } else if (this.xDirection == "RIGHT" && this.x > position.x) {
+    //             this.xDirection = "LEFT";
+    //             this.speedX *= -1;
+    //         }
+
+    //         if (this.yDirection == "UP" && this.y < position.y) {
+    //             this.yDirection = "DOWN";
+    //             this.speedY *= -1;
+    //         } else  if (this.yDirection == "DOWN" && this.y > position.y) {
+    //             this.yDirection = "UP";
+    //             this.speedY *= -1;
+    //         }
+    //     }
+    // }
 }
 
 function getConfig() {

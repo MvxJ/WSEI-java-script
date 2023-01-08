@@ -1,0 +1,19 @@
+body {
+    padding: 15px;
+}
+
+body h4 {
+    font-size: 16px;
+}
+
+.main-row {
+    height: 100%;
+}
+
+.custom-alert {
+    width: 300px;
+}
+
+.d-none {
+    display: none !important;
+}

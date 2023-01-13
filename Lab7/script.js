@@ -1,23 +1,52 @@
-const API_KEY = 'e351dbe1573e0eeb31f8120c0f39fc45';
+const API_KEY = '566154f12af4b888131f4f3f898368b9';
 const pinCityButton = document.getElementById("addCityToPinned");
 const pinnedCities = localStorage.getItem("pinnedCities");
 const lastBrowsedCities = localStorage.getItem("lastBrowsedCities");
+const searchButton = document.getElementById("search");
 
-pinCityButton.addEventListener("click", pinCurrentCity());
+
+searchButton.addEventListener("click", searchWeatherForCity);
+pinCityButton.addEventListener("click", pinCurrentCity);
 
 function pinCurrentCity() {
 
 }
+async function searchWeatherForCity()
+{
+    const data = await fetchWeatherData('search');
+    
+    if (data.cod === 200) {
+        //TODO:: Display city data
+    } else {
+        alert("City not found");
+    }
+}
 
-// const options = {
-// 	method: 'GET',
-// 	headers: {
-// 		'X-RapidAPI-Key': 'SIGN-UP-FOR-KEY',
-// 		'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
-// 	}
-// };
+async function fetchWeatherData(mode)
+{
+    let response = null;
+    if (mode == 'search') {
+        const searchText = document.getElementById("city").value;
+        response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${searchText}&appid=${API_KEY}&units=metric`);
+    } else if (mode == 'location') {
+        response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+    }
 
-// fetch('', options)
-// 	.then(response => response.json())
-// 	.then(response => console.log(response))
-// 	.catch(err => console.error(err));
+    const data = await response.json()
+
+    return data;
+}
+
+// function getLocation() {
+//     if (navigator.geolocation) {
+//         navigator.geolocation.getCurrentPosition((position) => {
+//             _viewModel.currentPosition = position
+//             _viewModel.getAddressFromLatLng(position)
+//             _viewModel.fetchWeatherDataFromLatLng(position)
+//             console.log(_viewModel.currentPosition)
+//         });
+//         console.log(navigator.geolocation)
+//     } else {
+//         x.innerHTML = "Geolocation is not supported by this browser.";
+//     }
+// }

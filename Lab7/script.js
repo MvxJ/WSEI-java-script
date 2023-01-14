@@ -1,40 +1,136 @@
 const API_KEY = '566154f12af4b888131f4f3f898368b9';
 const pinCityButton = document.getElementById("addCityToPinned");
-const pinnedCities = localStorage.getItem("pinnedCities");
-const lastBrowsedCities = localStorage.getItem("lastBrowsedCities");
+let pinnedCities = [];
+let lastBrowsedCities = [];
+let currCity = null;
 const searchButton = document.getElementById("search");
-
 
 searchButton.addEventListener("click", searchWeatherForCity);
 pinCityButton.addEventListener("click", pinCurrentCity);
 
-function pinCurrentCity() {
+class City {
+    constructor(data, displayName) {
+        this.id = generateId(4);
+        this.data = data;
+        this.displayName = displayName;
+    }
 
+    displayCityWeather() {
+
+    }
+
+    pinCity() {
+        if (pinnedCities < 0) {
+            pinnedCities.push(this);
+        } else {
+            const alertDialog = document.getElementById("limitDialog");
+            alertDialog.classList.remove('d-none');
+            setInterval(function () {
+                alertDialog.classList.add('d-none')
+            }, 5000);
+        }
+    }
 }
+
+getDataFromLocalStorage();
+displayPinnedCitiesAndLastBrowsedCities();
+
+window.onbeforeunload = saveCurrentState; 
+
+function getDataFromLocalStorage() {
+    const pinnedCitiesJson = localStorage.getItem("pinned");
+    const lastCitiesJson = localStorage.getItem("history");
+    pinnedCities = JSON.parse(pinnedCitiesJson);
+    lastBrowsedCities = JSON.parse(lastCitiesJson);
+}
+
+function displayPinnedCitiesAndLastBrowsedCities() {
+    displayHistory();
+    displayPinned();
+}
+
+function displayHistory() {
+    const list = document.getElementById("lastCheckedCities");
+    list.innerHTML = "";
+
+    if (lastBrowsedCities.length > 0) {
+        lastBrowsedCities.forEach(city => {
+            const el = createLiElement(city);
+            list.appendChild(el);
+        });
+    }
+}
+
+function displayPinned() {
+    if (pinnedCities.length > 0) {
+        const list = document.getElementById("pin");
+        list.innerHTML = "";
+
+        pinnedCities.forEach(city => {
+            const el = createLiElement(city);
+            list.appendChild(el);
+        });
+    }
+}
+
+function createLiElement(city) {
+    const liElement = document.createElement('li');
+    liElement.classList.add('left-side-li');
+    liElement.innerHTML = city.displayName;
+
+    return liElement;
+}
+
+function pinCurrentCity() {
+    currCity.pinCity();
+}
+
+function saveCurrentState() {
+    const pinnedCitiesString = JSON.stringify(pinnedCities);
+    localStorage.setItem("pinned", pinnedCitiesString);
+
+    const lastBrowsedCitiesString = JSON.stringify(lastBrowsedCities);
+    localStorage.setItem("history", lastBrowsedCitiesString);
+}
+
 async function searchWeatherForCity()
 {
-    const data = await fetchWeatherData('search');
+    const city = await fetchWeatherData();
+    currCity = city;
     
-    if (data.cod === 200) {
-        //TODO:: Display city data
+    if (city.data.cod === 200) {
+        lastBrowsedCities.push(city);
+        
+        if (lastBrowsedCities.length > 10) {
+            lastBrowsedCities.shift();
+        }
+
+        displayPinnedCitiesAndLastBrowsedCities();
+        //TODO:: Display weather data
     } else {
         alert("City not found");
     }
 }
 
-async function fetchWeatherData(mode)
+async function fetchWeatherData()
 {
-    let response = null;
-    if (mode == 'search') {
-        const searchText = document.getElementById("city").value;
-        response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${searchText}&appid=${API_KEY}&units=metric`);
-    } else if (mode == 'location') {
-        response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+    const searchText = document.getElementById("city").value;
+    response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${searchText}&appid=${API_KEY}&units=metric`);
+    const data = await response.json()
+    const city = new City(data, searchText);
+
+    return city;
+}
+
+function generateId(length) {
+    let id = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        id += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
 
-    const data = await response.json()
-
-    return data;
+    return id;
 }
 
 // function getLocation() {

@@ -47,6 +47,58 @@ body h4 {
     color: #b2b2b2;
 }
 
+.search-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#city {
+    width: 350px;
+    border: 2px solid #b2b2b2;
+    padding-left: 5px;
+    border-radius: 5px;
+}
+
+#autosuggest {
+    position: fixed;
+    top: 75px;
+    z-index: 1;
+}
+
+.auto-suggest-element {
+    height: 35px;
+    padding-left: 5px;
+    padding-top: 5px;
+    border-bottom:2px solid #000;
+    border-right:2px solid #000;
+    border-left:2px solid #000;
+    width: 350px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.auto-suggest-element:first() {
+    background-color: red;
+}
+
+.auto-suggest-element:nth-last-child(1) {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.auto-suggest-element:nth-child(1) {
+    border-top: 2px solid #000;
+}
+
+.autos-suggest-country {
+    color: #b2b2b2;
+}
+
+.lists-title {
+    margin-top: 15px;
+}
+
 .remove-pin-btn {
     float: right;
     display: block;

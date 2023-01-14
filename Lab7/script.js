@@ -10,7 +10,7 @@ searchButton.addEventListener("click", searchWeatherForCity);
 pinCityButton.addEventListener("click", pinCurrentCity);
 cityInputField.addEventListener("input", autoCompleteSuggest)
 cityInputField.addEventListener("blur", function () {
-    setTimeout(clearAutoSuggest, 5000);
+    setTimeout(clearAutoSuggest, 1000);
 })
 
 setTimeout(updateCitiesData, 1000 * 60 * 5);

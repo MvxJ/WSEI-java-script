@@ -9,15 +9,14 @@
                 <h4>Search city</h4>
                 <div>
                     <input type="text" id="city" name="city" placeholder="City" class="form-control">
+                    <div id="autosuggest"></div>
                     <button class="btn btn-primary" id="search">Search</button>
                 </div>
-                <h4>Last checked</h4>
+                <h4>Last searched:</h4>
                 <ul id="lastCheckedCities">
-                    <li>Kraków</li>
                 </ul>
                 <h4>Pinned</h4>
                 <ul id="pinnedCities">
-                    <li class="pin">Kraków</li>
                 </ul>
                 <div>
                     <button id="addCityToPinned" class="btn btn-success">Pin current city</button>
@@ -25,19 +24,39 @@
                 </div>
             </div>
             <div class="col-sm-9">
-                <h4>Weather for: </h4>
-                <p>City name</p>
+                <h4>Weather for: <span id="cityNameHeader"></span></h4>
                 <div class="weather-box">
-                    //Current weather information here
-                    <br>
-                    //Chart with weather for current location
-                    <br>
-                    //Api information
+                    <img id="weatherImage">
+                    <p>Country: <span id="country"></span></p>
+                    <p>Current weather: <span id="weatherMain"></span></p>
+                    <p>Weather description: <span id="weatherDesc"></span></p>
+                    <p>Sunrise: <span id="sunRise"></span></p>
+                    <p>Sunset: <span id="sunSet"></span></p>
+                    <p>Temperature: <span id="temp"></span></p>
+                    <p>Temperature Max: <span id="tempMax"></span></p>
+                    <p>Temperature Min: <span id="tempMin"></span></p>
+                    <p>Pressure: <span id="pressure"></span></p>
+                    <p>Humidity: <span id="humidity"></span></p>
+                    <p>Wind speed: <span id="windSpeed"></span></p>
+                    <p>Wind deg: <span id="winDeg"></span></p>
+                    //Wykres np 12h
                 </div>
             </div>
         </div>
         <div class="row">
         </div>
         <script type="text/javascript" src="./script.js"></script>
+        <!-- <script>
+            function initialize() {
+              var options = {
+                types: ['(cities)'],
+              };
+        
+              var input = document.getElementById('city');
+              var autocomplete = new google.maps.places.Autocomplete(input, options);
+            }
+        
+            window.addEventListener('load', initialize);
+          </script> -->
     </body>
 </html>

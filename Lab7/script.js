@@ -62,24 +62,24 @@ class City {
         const ctx = document.getElementById('weatherChart');
 
         //TODO:: Adjust displaying chart data
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                borderWidth: 1
-            }]
-            },
-            options: {
-            scales: {
-                y: {
-                beginAtZero: true
-                }
-            }
-            }
-        });
+        // new Chart(ctx, {
+        //     type: 'bar',
+        //     data: {
+        //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        //     datasets: [{
+        //         label: '# of Votes',
+        //         data: [12, 19, 3, 5, 2, 3],
+        //         borderWidth: 1
+        //     }]
+        //     },
+        //     options: {
+        //     scales: {
+        //         y: {
+        //         beginAtZero: true
+        //         }
+        //     }
+        //     }
+        // });
     }
 
     pinCity() {
@@ -320,9 +320,9 @@ function displaSugestions(cities) {
         const newDiv = document.createElement("div");
         newDiv.classList.add("auto-suggest-element");
         newDiv.innerHTML = cities.data[i].name + ", <span class='autos-suggest-country'>" + cities.data[i].country + "</span>";
+        const name = cities.data[i].name;
         newDiv.addEventListener('click', function () {
-            cityInputField.value = cities.data[i].name;
-            div.innerHTML = "";
+            cityInputField.value = name;
         });
 
         div.appendChild(newDiv);

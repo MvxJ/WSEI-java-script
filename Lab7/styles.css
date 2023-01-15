@@ -128,12 +128,15 @@ body h4 {
     width: 400px;
 }
 
-.main-info img {
-    margin-right: 10px;
-}
-
 .additional-info {
     width: 400px;
+    display: flex;
+}
+
+.additional-info img {
+    transform: scale(2);
+    margin-left: 125px;
+    margin-top: 30px;
 }
 
 #weatherChart {

@@ -3,6 +3,7 @@ const pinCityButton = document.getElementById("addCityToPinned");
 let pinnedCities = [];
 let lastBrowsedCities = [];
 let currCity = null;
+let chart = null;
 const searchButton = document.getElementById("search");
 const cityInputField = document.getElementById("city");
 
@@ -13,7 +14,7 @@ cityInputField.addEventListener("blur", function () {
     setTimeout(clearAutoSuggest, 1000);
 })
 
-setTimeout(updateCitiesData, 1000 * 60 * 5);
+setTimeout(updateCitiesData, 1000);
 
 class City {
     constructor(data, displayName, icon, obj = null) {
@@ -32,7 +33,10 @@ class City {
     }
 
     displayCityWeather() {
+        const currentDate = new Date();
         const dataDiv = document.getElementById("dataDiv");
+        const sunRiseDate = new Date(this.data.sys.sunrise * 1000);
+        const sunSetDate = new Date(this.data.sys.sunset * 1000);
 
         if (dataDiv.classList.contains('d-none')) {
             dataDiv.classList.add('d-none');
@@ -42,9 +46,8 @@ class City {
         document.getElementById("country").innerHTML = this.data.sys.country;
         document.getElementById("weatherMain").innerHTML = this.data.weather[0].main;
         document.getElementById("weatherDesc").innerHTML = this.data.weather[0].description;
-        const sunRiseDate = new Date(this.data.sys.sunrise * 1000);
+    
         document.getElementById("sunRise").innerHTML = getStringDateFromUnix(sunRiseDate);
-        const sunSetDate = new Date(this.data.sys.sunset * 1000);
         document.getElementById("sunSet").innerHTML = getStringDateFromUnix(sunSetDate);
         document.getElementById("temp").innerHTML = Math.ceil(this.data.main.temp) + "&#8451";
         document.getElementById("tempMax").innerHTML = Math.ceil(this.data.main.temp_max) + "&#8451";
@@ -55,31 +58,66 @@ class City {
         document.getElementById("winDeg").innerHTML = this.data.wind.deg;
         document.getElementById("weatherImage").src = this.icon;
 
+        this.adjustBackground(currentDate, sunRiseDate, sunSetDate);
+
         this.displayChart();
     }
 
-    displayChart() {
-        const ctx = document.getElementById('weatherChart');
+    adjustBackground(currentDate, sunRiseDate, sunSetDate) {
+        const backgroundDiv = document.getElementById("backgroundImage");
+        const customDataBox = document.getElementById("customDataBox");
 
-        //TODO:: Adjust displaying chart data
-        // new Chart(ctx, {
-        //     type: 'bar',
-        //     data: {
-        //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        //     datasets: [{
-        //         label: '# of Votes',
-        //         data: [12, 19, 3, 5, 2, 3],
-        //         borderWidth: 1
-        //     }]
-        //     },
-        //     options: {
-        //     scales: {
-        //         y: {
-        //         beginAtZero: true
-        //         }
-        //     }
-        //     }
-        // });
+        if (sunRiseDate > sunSetDate) {
+            if (currentDate > sunRiseDate) {
+                backgroundDiv.style.backgroundImage = "url(images/day.png)";
+                customDataBox.style.color = '#000';
+                customDataBox.classList.add('d-day');
+                customDataBox.classList.remove('d-night');
+            } else {
+                backgroundDiv.style.backgroundImage = "url(images/night.png)";
+                customDataBox.style.color = '#fff';
+                customDataBox.classList.add('d-night');
+                customDataBox.classList.remove('d-day');
+            }
+        } else {
+            if (currentDate > sunSetDate) {
+                backgroundDiv.style.backgroundImage = "url(images/night.png)";
+                customDataBox.style.color = '#fff';
+                customDataBox.classList.add('d-night');
+                customDataBox.classList.remove('d-day');
+            } else {
+                backgroundDiv.style.backgroundImage = "url(images/day.png)";
+                customDataBox.style.color = '#000';
+                customDataBox.classList.add('d-day');
+                customDataBox.classList.remove('d-night');
+            }
+        }
+    }
+
+    displayChart() {
+        const dataArray = prepareChartData(this.forecast.list);
+
+        chart.options.plugins.title.text = '5 days temperature chart for: ' + this.displayName;
+        chart.data.labels = prepareLabels(this.forecast.list);
+        chart.data.datasets = [        
+            {
+                label: 'Avg Temperature ℃',
+                data: Object.values(dataArray.avg),
+                borderWidth: 1
+            },
+            {
+                label: 'Min Temperature ℃',
+                data: Object.values(dataArray.min),
+                borderWidth: 1
+            },
+            {
+                label: 'Max Temperature ℃',
+                data: Object.values(dataArray.max),
+                borderWidth: 1
+            }
+        ];
+
+        chart.update();
     }
 
     pinCity() {
@@ -99,6 +137,7 @@ class City {
 
 getDataFromLocalStorage();
 displayPinnedCitiesAndLastBrowsedCities();
+prepareChart();
 
 if (pinnedCities.length > 0) {
     const city = new City(null, null, null, pinnedCities[0]);
@@ -125,6 +164,28 @@ function displayPinnedCitiesAndLastBrowsedCities() {
     displayHistory();
     displayPinned();
     saveCurrentState();
+}
+
+function prepareChart() {
+    const ctx = document.getElementById('weatherChart');
+    const context = ctx.getContext('2d');
+
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: []
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: ''
+                }
+            }
+        }
+    });
 }
 
 function getStringDateFromUnix(date) {
@@ -164,9 +225,10 @@ function displayHistory() {
 }
 
 function displayPinned() {
+    const list = document.getElementById("pinnedCities");
+    list.innerHTML = "";
+
     if (pinnedCities.length > 0) {
-        const list = document.getElementById("pinnedCities");
-        list.innerHTML = "";
 
         pinnedCities.forEach(city => {
             const el = createLiElement(city, 'pin-element');
@@ -202,7 +264,12 @@ function createRemoveButton(city)
     span.innerHTML = "Remove";
     span.classList.add("remove-pin-btn");
     span.addEventListener('click', function () {
-        pinnedCities = pinnedCities.filter(data => data.id != city.id);
+        if (pinnedCities.length > 1) {
+            pinnedCities = pinnedCities.filter(data => data.id != city.id);
+        } else {
+            pinnedCities = [];
+        }
+
         displayPinnedCitiesAndLastBrowsedCities();
     });
 
@@ -262,9 +329,8 @@ async function fetchWeatherData(searchText)
 
 async function fetchForecast(lat, lon)
 {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
     const data = await response.json();
-    console.log(data);
 
     return data;
 }
@@ -287,11 +353,15 @@ async function updateCitiesData() {
 async function fetchCitiesData() {
     for (const city of pinnedCities) {
         const newData = await fetchWeatherData(city.displayName);
+        const newForecast = await fetchForecast(city.data.coord.lat, city.data.coord.lon);
         city.data = newData;
+        city.forecast = newForecast;
     }
 
     await Promise.all(lastBrowsedCities.map(async (city) => {
         const newData = await fetchWeatherData(city.displayName);
+        const newForecast = await fetchForecast(city.data.coord.lat, city.data.coord.lon);
+        city.forecast = newForecast;
         city.data = newData;
     }));
 }
@@ -333,4 +403,49 @@ function clearAutoSuggest()
 {
     const div = document.getElementById("autosuggest");
     div.innerHTML = "";
+}
+
+function prepareChartData(list) {
+    const table = {
+        min: [],
+        max: [],
+        avg: []
+    }
+
+    list.forEach(element => {
+        const date = new Date(element.dt * 1000).toLocaleDateString("en-US");
+        
+        if (!table.min[date]) {
+            table.min[date] = parseFloat(element.main.temp_min);
+        } else {
+            table.min[date] > element.main.temp_min ? table.min[date] = parseFloat(element.main.temp_min) : table.min[date];
+        }
+
+        if (!table.max[date]) {
+            table.max[date] = parseFloat(element.main.temp_max);
+        } else {
+            table.max[date] > element.main.temp_max ? table.min[date] = parseFloat(element.main.temp_max) : table.min[date];
+        }
+    });
+    
+    const keys = Object.keys(table.min);
+    keys.forEach(key => {
+        table.avg[key] = (parseFloat(table.max[key]) + parseFloat(table.min[key]))/2
+
+    });
+
+    return table;
+}
+
+function prepareLabels(list) {
+    const table = [];
+
+    list.forEach(element => {
+        const date = new Date(element.dt * 1000).toLocaleDateString("en-US");
+        if (!table.includes(date)) {
+            table.push(date);
+        }
+    });
+
+    return table;
 }
